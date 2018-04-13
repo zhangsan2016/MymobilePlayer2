@@ -105,7 +105,8 @@ public class MainActivity extends FragmentActivity {
 
         BasePager basePager = basePagers.get(position);
 
-        if (basePager != null) {
+        if (basePager != null && basePager.isInitData) {
+            basePager.isInitData = false;
             basePager.initData();
         }
         return basePager;
@@ -117,7 +118,7 @@ public class MainActivity extends FragmentActivity {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
             BasePager basePager = getBasePager();
-            if (basePager != null) {
+            if (basePager != null ) {
                 //各个页面的视图
                 return basePager.rootView;
             }

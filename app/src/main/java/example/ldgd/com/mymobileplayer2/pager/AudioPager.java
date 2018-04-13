@@ -2,6 +2,7 @@ package example.ldgd.com.mymobileplayer2.pager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -31,4 +32,10 @@ public class AudioPager extends BasePager {
     }
 
 
+    @Override
+    public void initData() {
+        super.initData();
+
+        Log.e("NetAudioPager","xxxxxxxxxxxinitAudioPager");
+    }
 }

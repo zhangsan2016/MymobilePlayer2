@@ -18,10 +18,14 @@ public abstract class BasePager {
     public final Context mContext;
 
     /**
-     *  接收各个页面的实例
+     * 接收各个页面的实例
      */
-    public  View rootView;
+    public View rootView;
 
+    /**
+     * 石否初始化数据
+     */
+    public boolean isInitData = true;
 
 
     public BasePager(Context context) {
