@@ -12,11 +12,12 @@ import example.ldgd.com.mymobileplayer2.base.BasePager;
  * Created by ldgd on 2018/4/13.
  */
 
-public class VideoPager extends BasePager {
+public class AudioPager extends BasePager {
 
-    public VideoPager(Context context) {
+
+    public AudioPager(Context context) {
         super(context);
-   }
+    }
 
     @Override
     public View initView() {
@@ -24,7 +25,10 @@ public class VideoPager extends BasePager {
         TextView tv = new TextView(mContext);
         tv.setTextColor(Color.RED);
         tv.setGravity(Gravity.CENTER);
-        tv.setText("VideoPager");
+        tv.setText("AudioPager");
+
         return tv;
     }
+
+
 }

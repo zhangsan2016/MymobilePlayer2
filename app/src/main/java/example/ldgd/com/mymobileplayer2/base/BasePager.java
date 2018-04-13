@@ -15,17 +15,17 @@ public abstract class BasePager {
     /**
      * 上下文
      */
-    private final Context context;
+    public final Context mContext;
 
     /**
      *  接收各个页面的实例
      */
-    private  View rootView;
+    public  View rootView;
 
 
 
     public BasePager(Context context) {
-        this.context = context;
+        this.mContext = context;
         rootView = initView();
     }
 
