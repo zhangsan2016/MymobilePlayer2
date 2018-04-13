@@ -1,4 +1,4 @@
-package example.ldgd.com.mymobileplayer2;
+package example.ldgd.com.mymobileplayer2.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import example.ldgd.com.mymobileplayer2.R;
 
 public class SplashActivity extends Activity {
 

@@ -8,4 +8,29 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="botttom_tag_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@android:color/transparent</item>
+        <item name="android:drawablePadding">3dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textColor">@drawable/rb_video_textcolor_selector</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+
+
+  <!--  android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:button="@android:color/transparent"
+    android:drawablePadding="3dp"
+    android:drawableTop="@drawable/rb_video_drawable_selector"
+    android:gravity="center"
+    android:padding="5dp"
+    android:textColor="@drawable/rb_video_textcolor_selector"
+    android:textSize="10sp"-->
+
 </resources>

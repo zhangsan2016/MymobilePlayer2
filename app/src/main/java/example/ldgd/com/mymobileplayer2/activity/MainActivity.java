@@ -1,9 +1,11 @@
-package example.ldgd.com.mymobileplayer2;
+package example.ldgd.com.mymobileplayer2.activity;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import example.ldgd.com.mymobileplayer2.R;
+
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
