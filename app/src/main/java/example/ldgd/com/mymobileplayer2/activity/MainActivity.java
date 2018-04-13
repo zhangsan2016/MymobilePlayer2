@@ -77,13 +77,12 @@ public class MainActivity extends FragmentActivity {
                         position = 3;
                         break;
                 }
-
                 setFragment();
-
 
             }
         });
 
+        rgBottomTag.check(R.id.rb_video);
 
     }
 
