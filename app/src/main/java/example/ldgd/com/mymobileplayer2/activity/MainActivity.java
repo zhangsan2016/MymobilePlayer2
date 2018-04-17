@@ -138,7 +138,7 @@ public class MainActivity extends FragmentActivity {
      * @param activity
      * @return
      */
-    public static boolean isGrantExternalRW(Activity activity) {
+    public  boolean isGrantExternalRW(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -149,7 +149,7 @@ public class MainActivity extends FragmentActivity {
 
             return false;
         }
-
+        rgBottomTag.check(R.id.rb_video);
         return true;
     }
 
@@ -162,7 +162,6 @@ public class MainActivity extends FragmentActivity {
 
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     rgBottomTag.check(R.id.rb_video);
 
                 } else {
