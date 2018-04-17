@@ -1,5 +1,9 @@
 package example.ldgd.com.mymobileplayer2.activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -13,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -82,8 +87,9 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        rgBottomTag.check(R.id.rb_video);
 
+        // 当前界面获取读取权限
+        isGrantExternalRW(MainActivity.this);
     }
 
     /**
@@ -125,5 +131,48 @@ public class MainActivity extends FragmentActivity {
             return null;
         }
     }
+
+    /**
+     * 解决安卓6.0以上版本不能读取外部存储权限的问题
+     *
+     * @param activity
+     * @return
+     */
+    public static boolean isGrantExternalRW(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            activity.requestPermissions(new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, 1);
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    rgBottomTag.check(R.id.rb_video);
+
+                } else {
+                    Toast.makeText(MainActivity.this,"获取权限失败，不能使用当前功能",Toast.LENGTH_SHORT).show();
+                    this.finish();
+                }
+                return;
+            }
+        }
+    }
+
 
 }

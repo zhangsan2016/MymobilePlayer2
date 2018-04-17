@@ -24,7 +24,6 @@ public class SplashActivity extends Activity {
             public void run() {
 
                 startMainActivity();
-                Log.e(TAG, Thread.currentThread().getName());
 
             }
 
