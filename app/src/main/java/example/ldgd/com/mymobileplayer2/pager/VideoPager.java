@@ -2,13 +2,14 @@ package example.ldgd.com.mymobileplayer2.pager;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.R;
+import example.ldgd.com.mymobileplayer2.activity.SystemVideoPlayerActivity;
 import example.ldgd.com.mymobileplayer2.adapter.VideoPagerAdapter;
 import example.ldgd.com.mymobileplayer2.base.BasePager;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
@@ -82,6 +84,22 @@ public class VideoPager extends BasePager {
         tv_nomedia = view.findViewById(R.id.tv_nomedia);
         pb_loading = view.findViewById(R.id.pb_loading);
 
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+           /*     // 调用android系统播放器
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(mediaItems.get(i).getData()),"video/mp4");
+                mContext.startActivity(intent);*/
+
+                // 调用自己的播放器
+                Intent intent = new Intent(mContext,SystemVideoPlayerActivity.class);
+                intent.setDataAndType(Uri.parse(mediaItems.get(i).getData()),"video/mp4");
+                mContext.startActivity(intent);
+            }
+        });
+
         return view;
     }
 
@@ -97,10 +115,10 @@ public class VideoPager extends BasePager {
     public void getVideo() {
 
         new Thread(new Runnable() {
-           @Override
+            @Override
             public void run() {
                 // 休眠两秒
-               SystemClock.sleep(2000);
+              //  SystemClock.sleep(2000);
                 ContentResolver resolver = mContext.getContentResolver();
                 Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 String[] objs = {
