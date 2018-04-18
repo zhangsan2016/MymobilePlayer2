@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.MediaController;
 import android.widget.VideoView;
 
 import example.ldgd.com.mymobileplayer2.R;
@@ -24,6 +23,19 @@ public class SystemVideoPlayerActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        // 初始化数据
+        initData();
+
+        // 设置监听
+        setListener();
+
+
+
+
+    }
+
+    private void initData() {
         setContentView(R.layout.activity_system_video_player);
 
         videoView = this.findViewById(R.id.videoview);
@@ -34,8 +46,9 @@ public class SystemVideoPlayerActivity extends Activity {
         if(uri != null){
             videoView.setVideoURI(uri);
         }
+    }
 
-
+    private void setListener() {
         //准备好的监听
         videoView.setOnPreparedListener(new MyOnPreparedListener());
         //播放完成了的监听
@@ -44,8 +57,7 @@ public class SystemVideoPlayerActivity extends Activity {
         videoView.setOnErrorListener(new MyOnErrorListener());
 
         // 设置控制器
-        videoView.setMediaController(new MediaController(this));
-
+    //    videoView.setMediaController(new MediaController(this));
     }
 
 

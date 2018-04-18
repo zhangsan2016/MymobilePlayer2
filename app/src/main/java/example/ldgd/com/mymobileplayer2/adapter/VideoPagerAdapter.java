@@ -1,6 +1,7 @@
 package example.ldgd.com.mymobileplayer2.adapter;
 
 import android.content.Context;
+import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
+import example.ldgd.com.mymobileplayer2.util.Utils;
 
 /**
  * Created by ldgd on 2018/4/17.
@@ -19,10 +21,12 @@ public class VideoPagerAdapter extends BaseAdapter {
 
     private final Context context;
     private final ArrayList<MediaItem> mediaItems;
+    private final Utils utils;
 
     public VideoPagerAdapter(Context context, ArrayList<MediaItem> mediaItems) {
         this.context = context;
         this.mediaItems = mediaItems;
+        utils = new Utils();
     }
 
     @Override
@@ -60,8 +64,8 @@ public class VideoPagerAdapter extends BaseAdapter {
         MediaItem mediaItem = mediaItems.get(position);
 
         viewHoder.tv_video_name.setText(mediaItem.getName());
-        viewHoder.tv_size.setText(mediaItem.getDuration() + "");
-        viewHoder.tv_time.setText(mediaItem.getSize() + "");
+        viewHoder.tv_size.setText( Formatter.formatFileSize(context, mediaItem.getSize()) + "");
+        viewHoder.tv_time.setText( utils.stringForTime((int) mediaItem.getDuration())+ "");
 
         return convertView;
     }
