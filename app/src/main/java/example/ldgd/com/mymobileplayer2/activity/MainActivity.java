@@ -62,7 +62,6 @@ public class MainActivity extends FragmentActivity {
         basePagers.add(new NetVideoPager(this));//添加网络视频页面-2
         basePagers.add(new NetAudioPager(this));//添加网络音频页面-3
 
-
         //设置RadioGroup的监听
         rgBottomTag.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
