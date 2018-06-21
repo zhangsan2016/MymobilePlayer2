@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -86,17 +87,26 @@ public class VideoPager extends BasePager {
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
            /*     // 调用android系统播放器
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.parse(mediaItems.get(i).getData()),"video/mp4");
                 mContext.startActivity(intent);*/
 
-                // 调用自己的播放器
+                /*// 调用自己的播放器
                 Intent intent = new Intent(mContext,SystemVideoPlayerActivity.class);
                 intent.setDataAndType(Uri.parse(mediaItems.get(i).getData()),"video/mp4");
+                mContext.startActivity(intent);*/
+
+                // 传递播放列表
+                Intent intent = new Intent(mContext, SystemVideoPlayerActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("videolist", mediaItems);
+                intent.putExtras(bundle);
+                intent.putExtra("position", position);
                 mContext.startActivity(intent);
+
             }
         });
 
@@ -118,7 +128,7 @@ public class VideoPager extends BasePager {
             @Override
             public void run() {
                 // 休眠两秒
-              //  SystemClock.sleep(2000);
+                //  SystemClock.sleep(2000);
                 ContentResolver resolver = mContext.getContentResolver();
                 Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 String[] objs = {

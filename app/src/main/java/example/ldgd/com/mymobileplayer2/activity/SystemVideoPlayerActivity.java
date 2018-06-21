@@ -17,11 +17,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.R;
+import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.Utils;
 
 import static example.ldgd.com.mymobileplayer2.R.id.iv_system_time;
@@ -58,6 +61,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoStartPause;
     private Button btnVideoNext;
     private Button btnVideoSiwchScreen;
+
+    /**
+     * 传递过来的播放列表
+     */
+    private ArrayList<MediaItem> videolist;
+
+    /**
+     * 传递过来的播放位置
+     */
+    private int position;
 
 
     private Handler myHandler = new Handler() {
@@ -112,10 +125,6 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
     }
 
-    private void setData() {
-        //设置视频的名称
-        tvVideoName.setText(uri.toString());//设置视频的名称
-    }
 
     private String getSysteTime() {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
@@ -185,11 +194,31 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     public void getData() {
 
         //得到播放地址
-        uri = getIntent().getData();//文件夹，图片浏览器，QQ空间
+        uri = getIntent().getData();
+        // 获取播放列表
+        videolist = (ArrayList<MediaItem>) getIntent().getSerializableExtra("videolist");
+        // 获取播放位置
+        position = getIntent().getIntExtra("position", 0);
 
-        if (uri != null) {
+
+    }
+
+    private void setData() {
+
+        if (videolist != null && videolist.size() > 0) {
+            MediaItem mediaItem = videolist.get(position);
+            videoView.setVideoPath(mediaItem.getData());
+            //设置视频的名称
+            tvVideoName.setText(mediaItem.getName());
+
+        } else if (uri != null) {
             videoView.setVideoURI(uri);
+            //设置视频的名称
+            tvVideoName.setText(uri.toString());
+        } else {
+            Toast.makeText(this, "播放地址为NULL！", Toast.LENGTH_SHORT).show();
         }
+
     }
 
 
@@ -324,13 +353,13 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
         if (level <= 10) {
             tvBattery.setImageResource(R.drawable.ic_battery_10);
-        } else if (level <=  20) {
+        } else if (level <= 20) {
             tvBattery.setImageResource(R.drawable.ic_battery_20);
-        } else if (level <=  40) {
+        } else if (level <= 40) {
             tvBattery.setImageResource(R.drawable.ic_battery_40);
-        } else if (level <=  60) {
+        } else if (level <= 60) {
             tvBattery.setImageResource(R.drawable.ic_battery_60);
-        } else if (level <=  80) {
+        } else if (level <= 80) {
             tvBattery.setImageResource(R.drawable.ic_battery_80);
         } else if (level < 100) {
             tvBattery.setImageResource(R.drawable.ic_battery_100);

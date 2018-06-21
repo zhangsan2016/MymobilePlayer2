@@ -1,11 +1,13 @@
 package example.ldgd.com.mymobileplayer2.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by ldgd on 2018/4/17.
  * ：代表一个视频和音频
  */
 
-public class MediaItem {
+public class MediaItem implements Serializable {
 
     public MediaItem() {
     }
