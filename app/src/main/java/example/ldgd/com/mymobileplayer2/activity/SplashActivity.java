@@ -65,4 +65,6 @@ public class SplashActivity extends Activity {
         handler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
+
+
 }

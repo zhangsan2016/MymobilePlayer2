@@ -1,6 +1,10 @@
 package example.ldgd.com.mymobileplayer2.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +25,7 @@ import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.util.Utils;
 
 import static example.ldgd.com.mymobileplayer2.R.id.iv_system_time;
+import static example.ldgd.com.mymobileplayer2.R.id.tv_battery;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_current_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_duration;
 import static example.ldgd.com.mymobileplayer2.R.id.videoview;
@@ -120,7 +125,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private void initData() {
         setContentView(R.layout.activity_system_video_player);
         tvVideoName = (TextView) findViewById(R.id.tv_video_name);
-        tvBattery = (ImageView) findViewById(R.id.tv_battery);
+        tvBattery = (ImageView) findViewById(tv_battery);
         ivSystemTime = (TextView) findViewById(iv_system_time);
         btnVoice = (ImageButton) findViewById(R.id.btn_voice);
         seekbarVoice = (SeekBar) findViewById(R.id.seekbar_voice);
@@ -150,6 +155,12 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         videoView.setOnErrorListener(new MyOnErrorListener());
         //设置SeeKbar状态变化的监听
         seekbarVideo.setOnSeekBarChangeListener(new VideoOnSeekBarChangeListener());
+
+        // 设置电量变化监听
+        BatteryReceiver batteryReceiver = new BatteryReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(batteryReceiver, intentFilter);
 
 
         btnVoice.setOnClickListener(this);
@@ -284,10 +295,49 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
 
         //移除所有的消息
         myHandler.removeCallbacksAndMessages(null);
+
+        super.onDestroy();
+
+    }
+
+    private class BatteryReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            int level = intent.getIntExtra("level", 0);
+
+            // 设置电池电量
+            setBattery(level);
+
+        }
+    }
+
+    /**
+     * 设置电池电量
+     *
+     * @param level
+     */
+    private void setBattery(int level) {
+
+        if (level <= 10) {
+            tvBattery.setImageResource(R.drawable.ic_battery_10);
+        } else if (level <=  20) {
+            tvBattery.setImageResource(R.drawable.ic_battery_20);
+        } else if (level <=  40) {
+            tvBattery.setImageResource(R.drawable.ic_battery_40);
+        } else if (level <=  60) {
+            tvBattery.setImageResource(R.drawable.ic_battery_60);
+        } else if (level <=  80) {
+            tvBattery.setImageResource(R.drawable.ic_battery_80);
+        } else if (level < 100) {
+            tvBattery.setImageResource(R.drawable.ic_battery_100);
+        } else {
+            tvBattery.setImageResource(R.drawable.ic_battery_10);
+        }
+
 
     }
 }
