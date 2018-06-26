@@ -18,10 +18,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.Utils;
+import example.ldgd.com.mymobileplayer2.view.MyVideoView;
 
 import static example.ldgd.com.mymobileplayer2.R.id.iv_system_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_battery;
@@ -51,11 +52,15 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 默认
      */
     private static final int DEFAULT_SCREEN = 12;
+    /**
+     * 隐藏控制面板
+     */
+    private static final int HIDE_MEDIACONTROLLER = 13;
 
     /**
      * 当前播放器
      */
-    private VideoView videoView;
+    private MyVideoView videoView;
     private Utils utils;
     private Uri uri;
 
@@ -73,6 +78,10 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoStartPause;
     private Button btnVideoNext;
     private Button btnVideoSiwchScreen;
+    /**
+     * 视屏控制面板
+     */
+    private RelativeLayout media_controller;
 
     /**
      * 传递过来的播放列表
@@ -95,11 +104,23 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     /**
      * 屏幕宽
      */
-    private int screenWidth  = 0;
+    private int screenWidth = 0;
     /**
      * 屏幕高
      */
     private int screenHeight = 0;
+    /**
+     * video显示的宽
+     */
+    private int videoWidth;
+    /**
+     * video显示的高
+     */
+    private int videoHeight;
+    /**
+     * 是否显示控制面板
+     */
+    private boolean isshowMediaController = false;
 
 
     private Handler myHandler = new Handler() {
@@ -126,7 +147,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     myHandler.removeMessages(PROGRESS);
                     myHandler.sendEmptyMessageDelayed(PROGRESS, 1000);
 
-
+                    break;
+                case HIDE_MEDIACONTROLLER:   // 隐藏播放器控制面板
+                    hideMediaController();
                     break;
             }
 
@@ -175,6 +198,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         btnVideoStartPause = (Button) findViewById(R.id.btn_video_start_pause);
         btnVideoNext = (Button) findViewById(R.id.btn_video_next);
         btnVideoSiwchScreen = (Button) findViewById(R.id.btn_video_siwch_screen);
+        media_controller = this.findViewById(R.id.media_controller);
 
 
         videoView = this.findViewById(videoview);
@@ -280,28 +304,28 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     btnVideoNext.setEnabled(false);
                     btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
                     btnVideoPre.setEnabled(true);
-                } else {
-                    // 判断是否最后一个
-                    if (position == videolist.size() - 1) {
-                        btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
-                        btnVideoNext.setEnabled(false);
-                    } else if (position == 0) {
-                        btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray);
-                        btnVideoPre.setEnabled(false);
-
-                    } else {
-                        //两个按钮设置可点击
-                        setEnable(true);
-                    }
-
                 }
+            } else {
+
+                // 判断是否最后一个
+                if (position == videolist.size() - 1) {
+                    btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
+                    btnVideoNext.setEnabled(false);
+                } else if (position == 0) {
+                    btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray);
+                    btnVideoPre.setEnabled(false);
+
+                } else {
+                    //两个按钮设置可点击
+                    setEnable(true);
+                }
+
             }
 
         } else if (uri != null) {
             //两个按钮设置灰色
             setEnable(false);
         }
-
 
     }
 
@@ -351,6 +375,12 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             // 启动Handler更新
             myHandler.sendEmptyMessage(PROGRESS);
 
+            //  videoView.setVideoSize(200, 200);
+
+            // 获取屏幕宽高
+            videoWidth = mediaPlayer.getVideoWidth();
+            videoHeight = mediaPlayer.getVideoHeight();
+
         }
     }
 
@@ -383,9 +413,13 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
         } else if (v == btnVideoNext) {  // 下一个
             playNextVideo();
-        } else if (v == btnVideoSiwchScreen) {
-
+        } else if (v == btnVideoSiwchScreen) { // 切换屏幕大小（默认、全屏）
+            setFullScreenAndDefault();
         }
+
+        //发消息隐藏视频控制面板
+        myHandler.removeMessages(HIDE_MEDIACONTROLLER);
+        myHandler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
     }
 
     private void setStartPause() {
@@ -472,6 +506,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
 
+            myHandler.removeMessages(HIDE_MEDIACONTROLLER);
+
         }
 
         /**
@@ -482,6 +518,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
 
+            myHandler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
         }
     }
 
@@ -536,7 +573,20 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            Toast.makeText(SystemVideoPlayerActivity.this, "onSingleTapConfirmed", Toast.LENGTH_SHORT).show();
+
+            if (isshowMediaController) {
+                hideMediaController();
+                //把隐藏消息移除
+                myHandler.removeMessages(HIDE_MEDIACONTROLLER);
+
+            } else {
+
+                //显示
+                showMediaController();
+                //发消息隐藏
+                myHandler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+            }
+
             return super.onSingleTapConfirmed(e);
         }
 
@@ -549,7 +599,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         }
 
         @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
+        public boolean onDoubleTap(MotionEvent e) {
             setFullScreenAndDefault();
             return super.onDoubleTapEvent(e);
 
@@ -557,11 +607,29 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     }
 
     /**
+     * 隐藏控制面板
+     */
+    private void hideMediaController() {
+
+        media_controller.setVisibility(View.GONE);
+        isshowMediaController = false;
+    }
+
+    /**
+     * 显示控制面板
+     */
+    private void showMediaController() {
+        media_controller.setVisibility(View.VISIBLE);
+        isshowMediaController = true;
+    }
+
+
+    /**
      * 设置全屏或者默认
      */
     private void setFullScreenAndDefault() {
 
-        if (isFullScreen) {
+        if (!isFullScreen) {
             setVideoType(FULL_SCREEN);
         } else {
             setVideoType(DEFAULT_SCREEN);
@@ -573,10 +641,36 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
         switch (defaultScreen) {
             case FULL_SCREEN:
-
+                // 设置视屏画面大小-屏幕有多大就显示多大
+                videoView.setVideoSize(screenWidth, screenHeight);
+                //设置按钮状态为默认
+                btnVideoSiwchScreen.setBackgroundResource(R.drawable.btn_video_siwch_screen_default_selector);
+                isFullScreen = true;
 
                 break;
             case DEFAULT_SCREEN:
+
+                // 当前屏幕的宽高
+                int width = screenWidth;
+                int height = screenHeight;
+
+                // 当前播放视屏的宽高
+                int mVideoWidth = videoWidth;
+                int mVideoHeight = videoHeight;
+
+                // for compatibility, we adjust size based on aspect ratio
+                if (mVideoWidth * height < width * mVideoHeight) {
+                    //Log.i("@@@", "image too wide, correcting");
+                    width = height * mVideoWidth / mVideoHeight;
+                } else if (mVideoWidth * height > width * mVideoHeight) {
+                    //Log.i("@@@", "image too tall, correcting");
+                    height = width * mVideoHeight / mVideoWidth;
+                }
+
+                videoView.setVideoSize(width, height);
+                // 设置按钮状态为全屏
+                btnVideoSiwchScreen.setBackgroundResource(R.drawable.btn_video_siwch_screen_full_selector);
+                isFullScreen = false;
                 break;
         }
 

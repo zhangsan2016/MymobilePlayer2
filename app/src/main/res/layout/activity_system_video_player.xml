@@ -3,10 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    android:gravity="center"
     android:orientation="vertical">
 
-    <VideoView
+    <example.ldgd.com.mymobileplayer2.view.MyVideoView
         android:id="@+id/videoview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
