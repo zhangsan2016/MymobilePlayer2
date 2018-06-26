@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -40,6 +43,15 @@ import static example.ldgd.com.mymobileplayer2.R.id.videoview;
  */
 public class SystemVideoPlayerActivity extends Activity implements View.OnClickListener {
     private static final int PROGRESS = 10;
+    /**
+     * 全屏
+     */
+    private static final int FULL_SCREEN = 11;
+    /**
+     * 默认
+     */
+    private static final int DEFAULT_SCREEN = 12;
+
     /**
      * 当前播放器
      */
@@ -71,6 +83,23 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 传递过来的播放位置
      */
     private int position;
+
+    /**
+     * 手势识别器
+     */
+    private GestureDetector gestureDetector;
+    /**
+     * 是否全屏
+     */
+    private boolean isFullScreen = false;
+    /**
+     * 屏幕宽
+     */
+    private int screenWidth  = 0;
+    /**
+     * 屏幕高
+     */
+    private int screenHeight = 0;
 
 
     private Handler myHandler = new Handler() {
@@ -109,7 +138,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_system_video_player);
 
         // 初始化数据
         initData();
@@ -119,7 +148,6 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
         getData();
 
-        //
         setData();
 
 
@@ -132,7 +160,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     }
 
     private void initData() {
-        setContentView(R.layout.activity_system_video_player);
+
         tvVideoName = (TextView) findViewById(R.id.tv_video_name);
         tvBattery = (ImageView) findViewById(tv_battery);
         ivSystemTime = (TextView) findViewById(iv_system_time);
@@ -152,6 +180,12 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         videoView = this.findViewById(videoview);
 
         utils = new Utils();
+
+        // 获取当前屏幕宽高
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenWidth = displayMetrics.widthPixels;
+        screenHeight = displayMetrics.heightPixels;
 
     }
 
@@ -181,6 +215,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         btnVideoSiwchScreen.setOnClickListener(this);
         seekbarVideo.setOnClickListener(this);
 
+        gestureDetector = new GestureDetector(this, new MyOnGestureListener());
 
         // 设置控制器
         //    videoView.setMediaController(new MediaController(this));
@@ -219,6 +254,71 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             Toast.makeText(this, "播放地址为NULL！", Toast.LENGTH_SHORT).show();
         }
 
+        setButtonState();
+
+    }
+
+    /**
+     * 设置播放按钮状态
+     */
+    private void setButtonState() {
+
+        if (videolist != null && videolist.size() > 0) {
+
+            if (videolist.size() == 1) {
+                setEnable(false);
+            } else if (videolist.size() == 2) {
+                if (position == 0) {
+                    // 在播放列表长度为2时，position在第1个视屏时上一个点击按钮不能被点击，下一个可点击
+                    btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray);
+                    btnVideoPre.setEnabled(false);
+                    btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
+                    btnVideoNext.setEnabled(true);
+                } else if (position == 1) {
+                    // 在播放列表长度为2时，position在第2个视屏时上一个点击按钮能点击，下一个不可点击
+                    btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
+                    btnVideoNext.setEnabled(false);
+                    btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
+                    btnVideoPre.setEnabled(true);
+                } else {
+                    // 判断是否最后一个
+                    if (position == videolist.size() - 1) {
+                        btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
+                        btnVideoNext.setEnabled(false);
+                    } else if (position == 0) {
+                        btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray);
+                        btnVideoPre.setEnabled(false);
+
+                    } else {
+                        //两个按钮设置可点击
+                        setEnable(true);
+                    }
+
+                }
+            }
+
+        } else if (uri != null) {
+            //两个按钮设置灰色
+            setEnable(false);
+        }
+
+
+    }
+
+    private void setEnable(boolean isEnable) {
+
+        if (isEnable) {
+            btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
+            btnVideoPre.setEnabled(true);
+            btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
+            btnVideoNext.setEnabled(true);
+        } else {
+            //两个按钮设置灰色
+            btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray);
+            btnVideoPre.setEnabled(false);
+            btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
+            btnVideoNext.setEnabled(false);
+        }
     }
 
 
@@ -274,14 +374,77 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             // Handle clicks for btnSwichPlayer
         } else if (v == btnExit) {
             this.finish();
-        } else if (v == btnVideoPre) {
-        } else if (v == btnVideoStartPause) {
-            // Handle clicks for btnVideoStartPause
-        } else if (v == btnVideoNext) {
-            // Handle clicks for btnVideoNext
+        } else if (v == btnVideoPre) { // 上一个
+
+            playPreVideo();
+
+        } else if (v == btnVideoStartPause) {  // 播放暂停
+            setStartPause();
+
+        } else if (v == btnVideoNext) {  // 下一个
+            playNextVideo();
         } else if (v == btnVideoSiwchScreen) {
-            // Handle clicks for btnVideoSiwchScreen
+
         }
+    }
+
+    private void setStartPause() {
+        if (videoView.isPlaying()) {
+            // 视屏在播放 -- 设置暂停
+            videoView.pause();
+            // 按钮状态设置为播放
+            btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_start_selector);
+        } else {
+            // 视屏播放
+            videoView.start();
+            // 按钮状态设置为暂停
+            btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_pause_selector);
+        }
+    }
+
+    /**
+     * 播放上一个视屏
+     */
+    private void playPreVideo() {
+
+        if (videolist != null && videolist.size() > 0) {
+            position--;
+            if (position >= 0) {
+                MediaItem mediaItem = videolist.get(position);
+                videoView.setVideoPath(mediaItem.getData());
+                tvVideoName.setText(mediaItem.getName());
+                setButtonState();
+            }
+        } else if (uri != null) {
+            // 上一个下一个按钮设置为灰色，并且不可点击
+            setButtonState();
+
+        }
+    }
+
+    /**
+     * 播放下一个视屏
+     */
+    private void playNextVideo() {
+
+        if (videolist != null && videolist.size() > 0) {
+
+            position++;
+            if (position < videolist.size()) {
+                MediaItem mediaItem = videolist.get(position);
+                videoView.setVideoPath(mediaItem.getData());
+                tvVideoName.setText(mediaItem.getName());
+                setButtonState();
+            }
+
+
+        } else if (uri != null) {
+
+            // 上一个下一个按钮设置为灰色，并且不可点击
+            setButtonState();
+
+        }
+
     }
 
 
@@ -368,5 +531,60 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         }
 
 
+    }
+
+    private class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Toast.makeText(SystemVideoPlayerActivity.this, "onSingleTapConfirmed", Toast.LENGTH_SHORT).show();
+            return super.onSingleTapConfirmed(e);
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            super.onLongPress(e);
+            // 播放暂停
+            setStartPause();
+
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            setFullScreenAndDefault();
+            return super.onDoubleTapEvent(e);
+
+        }
+    }
+
+    /**
+     * 设置全屏或者默认
+     */
+    private void setFullScreenAndDefault() {
+
+        if (isFullScreen) {
+            setVideoType(FULL_SCREEN);
+        } else {
+            setVideoType(DEFAULT_SCREEN);
+        }
+
+    }
+
+    private void setVideoType(int defaultScreen) {
+
+        switch (defaultScreen) {
+            case FULL_SCREEN:
+
+
+                break;
+            case DEFAULT_SCREEN:
+                break;
+        }
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
     }
 }

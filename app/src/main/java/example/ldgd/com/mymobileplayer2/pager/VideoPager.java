@@ -85,6 +85,7 @@ public class VideoPager extends BasePager {
         tv_nomedia = view.findViewById(R.id.tv_nomedia);
         pb_loading = view.findViewById(R.id.pb_loading);
 
+
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
