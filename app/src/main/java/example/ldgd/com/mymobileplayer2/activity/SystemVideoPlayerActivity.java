@@ -211,6 +211,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         setData();
 
 
+
     }
 
     private Handler myHandler = new Handler() {
