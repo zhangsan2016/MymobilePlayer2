@@ -1,5 +1,8 @@
 package example.ldgd.com.mymobileplayer2.util;
 
+import android.content.Context;
+import android.net.TrafficStats;
+
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -12,6 +15,9 @@ public class Utils {
 
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
+
+    private long lastTotalRxBytes = 0;
+    private long lastTimeStamp = 0;
 
 
     public Utils() {
@@ -46,6 +52,7 @@ public class Utils {
 
     /**
      * 判断是否是网络的资源
+     *
      * @param uri
      * @return
      */
@@ -57,6 +64,25 @@ public class Utils {
             }
         }
         return reault;
+    }
+
+
+    /**
+     * 获取网络速度
+     *每隔两秒调用一次
+     * @return
+     */
+    public String getNetSpeed(Context context) {
+        String netSpeed = "0 kb/s";
+        long nowTotalRxBytes = TrafficStats.getUidRxBytes(context.getApplicationInfo().uid)==TrafficStats.UNSUPPORTED ? 0 :(TrafficStats.getTotalRxBytes()/1024);//转为KB;
+        long nowTimeStamp = System.currentTimeMillis();
+        long speed = ((nowTotalRxBytes - lastTotalRxBytes) * 1000 / (nowTimeStamp - lastTimeStamp));//毫秒转换
+
+        lastTimeStamp = nowTimeStamp;
+        lastTotalRxBytes = nowTotalRxBytes;
+        netSpeed  = String.valueOf(speed) + " kb/s";
+        return  netSpeed;
+
     }
 
 

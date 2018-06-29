@@ -61,6 +61,10 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 隐藏控制面板
      */
     private static final int HIDE_MEDIACONTROLLER = 13;
+    /**
+     * 显示网速
+     */
+    private static final int SHOW_SPEED = 14;
 
     /**
      * 当前播放器
@@ -176,11 +180,19 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 是否使用系统监听卡（系统和自定义监听结合一起使用，【有多种格式不能获取缓存】，能获取当前视屏的播放进度时
      * 使用用自定义的监听卡，不能获取当前视屏播放进度时，使用系统监听卡）
      */
-    private boolean isUseSystem = true;
+    private boolean isUseSystem = false;
     /**
      * 上一次的播放进度
      */
     public int precurrentPosition;
+    /**
+     * 监听卡 界面网速加载
+     */
+    private TextView tv_buffer_speed;
+    /**
+     * 加载框 界面网速加载
+     */
+    private TextView tv_loading_speed;
 
 
     @Override
@@ -209,6 +221,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             super.handleMessage(msg);
 
             switch (msg.what) {
+                case SHOW_SPEED://显示网速
+                    //1.得到网络速度
+                    String netSpeed = utils.getNetSpeed(SystemVideoPlayerActivity.this);
+                    tv_loading_speed.setText("加载中..." + netSpeed);
+                    tv_buffer_speed.setText("缓存中.." + netSpeed);
+
+                    // 每2秒更新一次
+                    myHandler.removeMessages(SHOW_SPEED);
+                    myHandler.sendEmptyMessageDelayed(SHOW_SPEED, 2000);
+                    break;
                 case PROGRESS: // 更新进度
 
 
@@ -233,19 +255,20 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     }
 
                     // 使用监听卡
-                    if (!isUseSystem && videoView.isPlaying()) {
-                        int buffer = currentPosition - precurrentPosition;
-                        if (buffer < 500) {
-                            //视频卡了
-                            ll_buffer.setVisibility(View.VISIBLE);
+                    if (!isUseSystem) {
+                        if (videoView.isPlaying()) {
+                            int buffer = currentPosition - precurrentPosition;
+                            if (buffer < 500) {
+                                //视频卡了
+                                ll_buffer.setVisibility(View.VISIBLE);
+                            } else {
+                                //视频不卡了
+                                ll_buffer.setVisibility(View.GONE);
+                            }
                         } else {
                             //视频不卡了
                             ll_buffer.setVisibility(View.GONE);
                         }
-
-                    } else {
-                        //视频不卡了
-                        ll_buffer.setVisibility(View.GONE);
                     }
 
                     precurrentPosition = videoView.getCurrentPosition();
@@ -289,7 +312,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         media_controller = this.findViewById(R.id.media_controller);
         ll_buffer = this.findViewById(R.id.ll_buffer);
         ll_loading = this.findViewById(R.id.ll_loading);
-
+        tv_buffer_speed = this.findViewById(R.id.tv_buffer_speed);
+        tv_loading_speed = this.findViewById(R.id.tv_loading_speed);
 
         videoView = this.findViewById(videoview);
 
@@ -305,6 +329,10 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         am = (AudioManager) getSystemService(AUDIO_SERVICE);
         maxVolume = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         currentVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        // 每2秒更新一次网速
+        myHandler.removeMessages(SHOW_SPEED);
+        myHandler.sendEmptyMessageDelayed(SHOW_SPEED, 2000);
 
 
     }
