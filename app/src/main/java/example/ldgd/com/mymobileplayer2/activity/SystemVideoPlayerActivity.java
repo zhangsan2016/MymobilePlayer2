@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -29,10 +30,10 @@ import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
+import example.ldgd.com.mymobileplayer2.util.LogUtil;
 import example.ldgd.com.mymobileplayer2.util.Utils;
 import example.ldgd.com.mymobileplayer2.view.MyVideoView;
 
-import static android.R.attr.endY;
 import static example.ldgd.com.mymobileplayer2.R.id.iv_system_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_battery;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_current_time;
@@ -153,6 +154,14 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 屏幕的高
      */
     private int touchRang;
+    /**
+     * 电量广播接收器
+     */
+    private BatteryReceiver batteryReceiver;
+    /**
+     * 是否是网络uri
+     */
+    private boolean isNetUri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -173,6 +182,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     }
 
     private Handler myHandler = new Handler() {
+
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -191,6 +202,15 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     // 更新当前系统时间
                     ivSystemTime.setText(getSysteTime());
 
+                    // 判断是否网络资源，如果是加载播放器缓冲
+                    LogUtil.e("isNetUri = " + isNetUri);
+                    if (isNetUri) {
+                        //只有网络资源才有缓存效果
+                        int buffer = videoView.getBufferPercentage();  // 0~100
+                        int totalBuffer = buffer * seekbarVideo.getMax();
+                        int secondaryProgress = totalBuffer / 100;
+                        seekbarVideo.setSecondaryProgress(secondaryProgress);
+                    }
 
                     // 每秒更新一次
                     myHandler.removeMessages(PROGRESS);
@@ -262,7 +282,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         seekbarVoice.setOnSeekBarChangeListener(new VoiceOnSeekBarChangeListener());
 
         // 设置电量变化监听
-        BatteryReceiver batteryReceiver = new BatteryReceiver();
+        batteryReceiver = new BatteryReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(batteryReceiver, intentFilter);
@@ -310,6 +330,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         if (videolist != null && videolist.size() > 0) {
             MediaItem mediaItem = videolist.get(position);
             videoView.setVideoPath(mediaItem.getData());
+            // 判断是否网络资源
+            isNetUri = utils.isNetUri(mediaItem.getData());
             //设置视频的名称
             tvVideoName.setText(mediaItem.getName());
 
@@ -317,6 +339,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             videoView.setVideoURI(uri);
             //设置视频的名称
             tvVideoName.setText(uri.toString());
+            // 判断是否网络资源
+            isNetUri = utils.isNetUri(uri.toString());
         } else {
             Toast.makeText(this, "播放地址为NULL！", Toast.LENGTH_SHORT).show();
         }
@@ -492,6 +516,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 MediaItem mediaItem = videolist.get(position);
                 videoView.setVideoPath(mediaItem.getData());
                 tvVideoName.setText(mediaItem.getName());
+                // 判断是否网络资源
+                isNetUri = utils.isNetUri(mediaItem.getData());
                 setButtonState();
             }
         } else if (uri != null) {
@@ -513,6 +539,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 MediaItem mediaItem = videolist.get(position);
                 videoView.setVideoPath(mediaItem.getData());
                 tvVideoName.setText(mediaItem.getName());
+                // 判断是否网络资源
+                isNetUri = utils.isNetUri(mediaItem.getData());
                 setButtonState();
             }
 
@@ -635,6 +663,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
+
+        this.unregisterReceiver(batteryReceiver);
 
         //移除所有的消息
         myHandler.removeCallbacksAndMessages(null);
@@ -802,9 +832,14 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
                 break;
             case MotionEvent.ACTION_MOVE:
-
                 float endY = event.getY();
+                float endX = event.getY();
                 float distanceY = startY - endY;
+                float distanceX = startX - endX;
+
+                LogUtil.e("distanceY" + distanceY);
+                LogUtil.e("distanceX" + distanceX);
+
                 //改变声音 = （滑动屏幕的距离： 总距离）*音量最大值
                 float delta = (distanceY / touchRang) * maxVolume;
                 //最终声音 = 原来的 + 改变声音；条件：不能比0小，不能比最大值大
@@ -813,6 +848,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     isMute = false;
                     updataVoice(voice, isMute);
                 }
+
+
                 break;
             case MotionEvent.ACTION_UP:
                 myHandler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
@@ -820,5 +857,25 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         }
 
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            currentVolume--;
+            updataVoice(currentVolume, false);
+            myHandler.removeMessages(HIDE_MEDIACONTROLLER);
+            myHandler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+            return false;
+
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            currentVolume++;
+            updataVoice(currentVolume, false);
+            myHandler.removeMessages(HIDE_MEDIACONTROLLER);
+            myHandler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

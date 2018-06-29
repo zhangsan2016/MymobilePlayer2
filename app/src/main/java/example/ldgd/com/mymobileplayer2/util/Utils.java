@@ -44,4 +44,20 @@ public class Utils {
         }
     }
 
+    /**
+     * 判断是否是网络的资源
+     * @param uri
+     * @return
+     */
+    public boolean isNetUri(String uri) {
+        boolean reault = false;
+        if (uri != null) {
+            if (uri.toLowerCase().startsWith("http") || uri.toLowerCase().startsWith("rtsp") || uri.toLowerCase().startsWith("mms")) {
+                reault = true;
+            }
+        }
+        return reault;
+    }
+
+
 }
