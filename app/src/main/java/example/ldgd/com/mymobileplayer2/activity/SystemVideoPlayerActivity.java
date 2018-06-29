@@ -165,6 +165,16 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      * 是否是网络uri
      */
     private boolean isNetUri;
+    /**
+     * 是否使用系统监听卡（系统和自定义监听结合一起使用，【有多种格式不能获取缓存】，能获取当前视屏的播放进度时
+     * 使用用自定义的监听卡，不能获取当前视屏播放进度时，使用系统监听卡）
+     */
+    private boolean isUseSystem = true;
+    /**
+     * 上一次的播放进度
+     */
+    public int precurrentPosition;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -214,6 +224,24 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                         int secondaryProgress = totalBuffer / 100;
                         seekbarVideo.setSecondaryProgress(secondaryProgress);
                     }
+
+                    // 使用监听卡
+                    if (!isUseSystem && videoView.isPlaying()) {
+                        int buffer = currentPosition - precurrentPosition;
+                        if (buffer < 500) {
+                            //视频卡了
+                            ll_buffer.setVisibility(View.VISIBLE);
+                        } else {
+                            //视频不卡了
+                            ll_buffer.setVisibility(View.GONE);
+                        }
+
+                    } else {
+                        //视频不卡了
+                        ll_buffer.setVisibility(View.GONE);
+                    }
+
+                    precurrentPosition = videoView.getCurrentPosition();
 
                     // 每秒更新一次
                     myHandler.removeMessages(PROGRESS);
@@ -308,11 +336,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         seekbarVoice.setProgress(currentVolume);
 
         // 设置系统监听卡（android 4.3以上版本才能使用）
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            videoView.setOnInfoListener(new MyOnInfoListener());
+        if (isUseSystem) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                videoView.setOnInfoListener(new MyOnInfoListener());
+            }
         }
-
-
 
 
         // 设置控制器
