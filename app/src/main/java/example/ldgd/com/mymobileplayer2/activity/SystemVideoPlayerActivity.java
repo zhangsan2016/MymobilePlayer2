@@ -212,6 +212,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
 
 
+
     }
 
     private Handler myHandler = new Handler() {
