@@ -84,7 +84,14 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoStartPause;
     private Button btnVideoNext;
     private Button btnVideoSiwchScreen;
+    /**
+     * 监听“卡”
+     */
     private LinearLayout ll_buffer;
+    /**
+     * 加载框
+     */
+    private LinearLayout ll_loading;
     /**
      * 视屏控制面板
      */
@@ -281,6 +288,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         btnVideoSiwchScreen = (Button) findViewById(R.id.btn_video_siwch_screen);
         media_controller = this.findViewById(R.id.media_controller);
         ll_buffer = this.findViewById(R.id.ll_buffer);
+        ll_loading = this.findViewById(R.id.ll_loading);
 
 
         videoView = this.findViewById(videoview);
@@ -487,6 +495,9 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             videoWidth = mediaPlayer.getVideoWidth();
             videoHeight = mediaPlayer.getVideoHeight();
 
+            // 关闭加载框
+            ll_loading.setVisibility(View.GONE);
+
         }
     }
 
@@ -555,6 +566,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 MediaItem mediaItem = videolist.get(position);
                 videoView.setVideoPath(mediaItem.getData());
                 tvVideoName.setText(mediaItem.getName());
+                // 显示加载框
+                ll_loading.setVisibility(View.VISIBLE);
                 // 判断是否网络资源
                 isNetUri = utils.isNetUri(mediaItem.getData());
                 setButtonState();
@@ -578,6 +591,8 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                 MediaItem mediaItem = videolist.get(position);
                 videoView.setVideoPath(mediaItem.getData());
                 tvVideoName.setText(mediaItem.getName());
+                // 显示加载框
+                ll_loading.setVisibility(View.VISIBLE);
                 // 判断是否网络资源
                 isNetUri = utils.isNetUri(mediaItem.getData());
                 setButtonState();

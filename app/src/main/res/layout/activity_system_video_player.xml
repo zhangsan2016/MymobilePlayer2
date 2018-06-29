@@ -16,10 +16,15 @@
         layout="@layout/media_controller"></include>
 
 
-    <!-- 监听卡 -->
+    <!-- 监听“卡” -->
     <include
         android:id="@+id/ll_buffer"
         layout="@layout/ll_buffer"></include>
+
+    <!-- 加载框 -->
+    <include
+        android:id="@+id/ll_loading"
+        layout="@layout/ll_loading"></include>
 
 
 </RelativeLayout>
