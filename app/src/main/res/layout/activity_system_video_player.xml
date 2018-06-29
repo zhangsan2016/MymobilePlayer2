@@ -16,4 +16,10 @@
         layout="@layout/media_controller"></include>
 
 
+    <!-- 监听卡 -->
+    <include
+        android:id="@+id/ll_buffer"
+        layout="@layout/ll_buffer"></include>
+
+
 </RelativeLayout>

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -82,6 +84,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     private Button btnVideoStartPause;
     private Button btnVideoNext;
     private Button btnVideoSiwchScreen;
+    private LinearLayout ll_buffer;
     /**
      * 视屏控制面板
      */
@@ -249,6 +252,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         btnVideoNext = (Button) findViewById(R.id.btn_video_next);
         btnVideoSiwchScreen = (Button) findViewById(R.id.btn_video_siwch_screen);
         media_controller = this.findViewById(R.id.media_controller);
+        ll_buffer = this.findViewById(R.id.ll_buffer);
 
 
         videoView = this.findViewById(videoview);
@@ -302,6 +306,13 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         // 设置音频进度条参数
         seekbarVoice.setMax(maxVolume);
         seekbarVoice.setProgress(currentVolume);
+
+        // 设置系统监听卡（android 4.3以上版本才能使用）
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            videoView.setOnInfoListener(new MyOnInfoListener());
+        }
+
+
 
 
         // 设置控制器
@@ -877,5 +888,27 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 系统监听卡
+     */
+    private class MyOnInfoListener implements MediaPlayer.OnInfoListener {
+        @Override
+        public boolean onInfo(MediaPlayer mp, int what, int extra) {
+
+            switch (what) {
+                case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                    // Toast.makeText(SystemVideoPlayerActivity.this, "卡住了！", Toast.LENGTH_SHORT).show();
+                    ll_buffer.setVisibility(View.VISIBLE);
+                    break;
+                case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                    //    Toast.makeText(SystemVideoPlayerActivity.this, "不卡了！", Toast.LENGTH_SHORT).show();
+                    ll_buffer.setVisibility(View.GONE);
+                    break;
+            }
+
+            return false;
+        }
     }
 }
