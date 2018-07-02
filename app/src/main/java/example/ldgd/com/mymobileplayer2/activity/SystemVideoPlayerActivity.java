@@ -534,8 +534,20 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
      */
     private class MyOnErrorListener implements MediaPlayer.OnErrorListener {
 
+        /*
+           当系统播放器格式不支持时，跳转到Vitamio播放器
+         */
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+
+        /*    // 传递播放列表
+            Intent intent = new Intent(SystemVideoPlayerActivity.this, SystemVideoPlayerActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", videolist);
+            intent.putExtras(bundle);
+            intent.putExtra("position", position);
+            SystemVideoPlayerActivity.this.startActivity(intent);*/
+
             return false;
         }
     }

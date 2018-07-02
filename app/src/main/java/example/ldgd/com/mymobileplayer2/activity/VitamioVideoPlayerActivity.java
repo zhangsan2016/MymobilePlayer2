@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +33,8 @@ import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.LogUtil;
 import example.ldgd.com.mymobileplayer2.util.Utils;
-import example.ldgd.com.mymobileplayer2.view.MyVideoView;
+import example.ldgd.com.mymobileplayer2.view.MyVitamioView;
+import io.vov.vitamio.MediaPlayer;
 
 import static example.ldgd.com.mymobileplayer2.R.id.iv_system_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_battery;
@@ -45,7 +45,7 @@ import static example.ldgd.com.mymobileplayer2.R.id.videoview;
 
 /**
  * Created by ldgd on 2018/4/17.
- * 系统播放器
+ * Vitamio播放器
  */
 public class VitamioVideoPlayerActivity extends Activity implements View.OnClickListener {
     private static final int PROGRESS = 10;
@@ -69,7 +69,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     /**
      * 当前播放器
      */
-    private MyVideoView videoView;
+    private MyVitamioView videoView;
     private Utils utils;
     private Uri uri;
 
@@ -198,7 +198,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_system_video_player);
+        setContentView(R.layout.activity_vitamio_video_player);
 
         // 初始化数据
         initData();
@@ -235,7 +235,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
 
                     // 设置视频当前进度
-                    int currentPosition = videoView.getCurrentPosition();
+                    int currentPosition = (int) videoView.getCurrentPosition();
                     seekbarVideo.setProgress(currentPosition);
 
                     //  更新文本播放进度
@@ -271,7 +271,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
                         }
                     }
 
-                    precurrentPosition = videoView.getCurrentPosition();
+                    precurrentPosition = (int) videoView.getCurrentPosition();
 
                     // 每秒更新一次
                     myHandler.removeMessages(PROGRESS);
@@ -491,29 +491,30 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     /**
      * 播放完成监听
      */
-    private class MyOnCompletionListener implements MediaPlayer.OnCompletionListener {
+    private class MyOnCompletionListener implements io.vov.vitamio.MediaPlayer.OnCompletionListener {
+
 
         @Override
-        public void onCompletion(MediaPlayer mediaPlayer) {
+        public void onCompletion(io.vov.vitamio.MediaPlayer mediaPlayer) {
 
         }
+
     }
 
     /**
      * 准备好监听
      */
-    private class MyOnPreparedListener implements MediaPlayer.OnPreparedListener {
+    private class MyOnPreparedListener implements io.vov.vitamio.MediaPlayer.OnPreparedListener {
 
         @Override
-        public void onPrepared(MediaPlayer mediaPlayer) {
-
+        public void onPrepared(io.vov.vitamio.MediaPlayer mediaPlayer) {
             //视频播放
             videoView.start();
 
             // 给seekbar设置视频总长度
-            seekbarVideo.setMax(videoView.getDuration());
+            seekbarVideo.setMax((int) videoView.getDuration());
             // 给文本设置总时长
-            tvDuration.setText(utils.stringForTime(videoView.getDuration()));
+            tvDuration.setText(utils.stringForTime((int) videoView.getDuration()));
             // 启动Handler更新
             myHandler.sendEmptyMessage(PROGRESS);
 
@@ -525,19 +526,20 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
             // 关闭加载框
             ll_loading.setVisibility(View.GONE);
-
         }
     }
 
     /**
      * 出错的监听
      */
-    private class MyOnErrorListener implements MediaPlayer.OnErrorListener {
+    private class MyOnErrorListener implements io.vov.vitamio.MediaPlayer.OnErrorListener {
 
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
             return false;
         }
+
+
     }
 
 
@@ -964,10 +966,9 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     /**
      * 系统监听卡
      */
-    private class MyOnInfoListener implements MediaPlayer.OnInfoListener {
+    private class MyOnInfoListener implements io.vov.vitamio.MediaPlayer.OnInfoListener {
         @Override
-        public boolean onInfo(MediaPlayer mp, int what, int extra) {
-
+        public boolean onInfo(io.vov.vitamio.MediaPlayer mp, int what, int extra) {
             switch (what) {
                 case MediaPlayer.MEDIA_INFO_BUFFERING_START:
                     // Toast.makeText(SystemVideoPlayerActivity.this, "卡住了！", Toast.LENGTH_SHORT).show();
