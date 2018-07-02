@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="example.ldgd.com.mymobileplayer2">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
 
     <application
@@ -30,9 +33,9 @@
         <activity
             android:name=".activity.SystemVideoPlayerActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
+            android:label="@string/player_name"
             android:screenOrientation="landscape"
-            android:theme="@style/noAnimation_Theme"
-            android:label="@string/player_name">
+            android:theme="@style/noAnimation_Theme">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
