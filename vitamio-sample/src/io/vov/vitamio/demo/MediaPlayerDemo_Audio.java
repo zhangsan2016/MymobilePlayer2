@@ -26,8 +26,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.Vitamio;
 
 public class MediaPlayerDemo_Audio extends Activity {
 
@@ -46,8 +46,7 @@ public class MediaPlayerDemo_Audio extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		if (!LibsChecker.checkVitamioLibs(this))
-			return;
+		Vitamio.isInitialized(getApplicationContext());
 		tx = new TextView(this);
 		setContentView(tx);
 		Bundle extras = getIntent().getExtras();
@@ -62,14 +61,20 @@ public class MediaPlayerDemo_Audio extends Activity {
 				 * TODO: Set the path variable to a local audio file path.
 				 */
 				path = "";
+				path="/sdcard/test.mp3";
+				path="http://igetoss.cdn.igetget.com/aac/201610/31/64000_201610311835566960101885.m4a?OSSAccessKeyId=jNaxWIooBUXUVPJM&Expires=1480580436&Signature=WaFnV9X2ba21FsL3CZP2CF3Z5Rw%3D";
 				if (path == "") {
 					// Tell the user to provide an audio file URL.
-					Toast.makeText(MediaPlayerDemo_Audio.this, "Please edit MediaPlayer_Audio Activity, " + "and set the path variable to your audio file path." + " Your audio file must be stored on sdcard.", Toast.LENGTH_LONG).show();
+					Toast.makeText(MediaPlayerDemo_Audio.this, " TTTTT  Please edit MediaPlayer_Audio Activity, " + "and set the path variable to your audio file path." + " Your audio file must be stored on sdcard.", Toast.LENGTH_LONG).show();
 					return;
 				}
 				mMediaPlayer = new MediaPlayer(this);
 				mMediaPlayer.setDataSource(path);
+
 				mMediaPlayer.prepare();
+
+
+
 				mMediaPlayer.start();
 				break;
 			case RESOURCES_AUDIO:

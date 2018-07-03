@@ -32,7 +32,7 @@ public class MediaMetadataRetrieverDemo extends Activity {
 		super.onCreate(savedInstanceState);
 		io.vov.vitamio.MediaMetadataRetriever retriever = new io.vov.vitamio.MediaMetadataRetriever(this);
 		try {
-			path = "";
+			path="http://gslb.miaopai.com/stream/3D~8BM-7CZqjZscVBEYr5g__.mp4";
 			if (path == "") {
 				// Tell the user to provide an audio file URL.
 				Toast.makeText(MediaMetadataRetrieverDemo.this, "Please edit MediaMetadataRetrieverDemo Activity, " + "and set the path variable to your audio file path." + " Your audio file must be stored on sdcard.", Toast.LENGTH_LONG).show();
@@ -46,13 +46,14 @@ public class MediaMetadataRetrieverDemo extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		long durationMs = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+	
+		String duration=retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);	
+		long durationMs = Long.parseLong(duration);	
 		String artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-		String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-		
+		String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);	
 		setContentView(R.layout.media_metadata);
 		TextView textView = (TextView)findViewById(R.id.textView);
-		textView.setText(durationMs + "" + artist + title);
-		
+		textView.setText(durationMs + "" + artist + title);	
+		retriever.release();
 	}
 }

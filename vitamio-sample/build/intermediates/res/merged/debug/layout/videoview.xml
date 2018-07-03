@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="12"
-            android:text="http://192.168.24.1/寂静之地.mp4"
+            android:text="http://192.168.24.1/赌侠马华.rmvb"
             android:hint="Please input url" >
         </EditText>
 

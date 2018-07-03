@@ -70,8 +70,7 @@ public final class R {
         public static final int videoview=0x7f030008;
     }
     public static final class raw {
-        public static final int libarm=0x7f040000;
-        public static final int test_cbr=0x7f040001;
+        public static final int test_cbr=0x7f040000;
     }
     public static final class string {
         public static final int VideoView_error_button=0x7f060000;

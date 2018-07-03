@@ -13,6 +13,7 @@ public final class R {
         public static final int transparent = 0x7f050002;
     }
     public static final class drawable {
+        public static final int ic_launcher = 0x7f020000;
         public static final int mediacontroller_button = 0x7f020001;
         public static final int mediacontroller_pause = 0x7f020002;
         public static final int mediacontroller_play = 0x7f020003;
@@ -35,9 +36,6 @@ public final class R {
     }
     public static final class layout {
         public static final int mediacontroller = 0x7f030001;
-    }
-    public static final class raw {
-        public static final int libarm = 0x7f040000;
     }
     public static final class string {
         public static final int VideoView_error_button = 0x7f060000;

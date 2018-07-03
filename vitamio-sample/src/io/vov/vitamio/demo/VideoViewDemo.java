@@ -24,27 +24,38 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 public class VideoViewDemo extends Activity {
 
+	private EditText mEditText;
+	private String path;
+	private VideoView mVideoView;
+
 	/**
 	 * TODO: Set the path variable to a streaming video URL or a local media file
 	 * path.
 	 */
-	private String path = "";
-	private VideoView mVideoView;
-	private EditText mEditText;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		if (!LibsChecker.checkVitamioLibs(this))
-			return;
+
+		Vitamio.isInitialized(getApplicationContext());
+		
 		setContentView(R.layout.videoview);
+
+		playfunction();	
+
+	}
+
+	
+	void playfunction(){
+		 path="http://gslb.miaopai.com/stream/3D~8BM-7CZqjZscVBEYr5g__.mp4";
+
 		mEditText = (EditText) findViewById(R.id.url);
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
 		if (path == "") {
@@ -68,19 +79,13 @@ public class VideoViewDemo extends Activity {
 				}
 			});
 		}
+	}
 
-	}
-	
 	public void startPlay(View view) {
-	    String url = mEditText.getText().toString();
-	    path = url;
-	    if (!TextUtils.isEmpty(url)) {
-	        mVideoView.setVideoPath(url);
-	    }
-    }
-	
-	public void openVideo(View View) {
-	  mVideoView.setVideoPath(path);
+		String url = mEditText.getText().toString();
+		path = url;
+		if (!TextUtils.isEmpty(url)) {
+			mVideoView.setVideoPath(url);
+		}
 	}
-	
 }

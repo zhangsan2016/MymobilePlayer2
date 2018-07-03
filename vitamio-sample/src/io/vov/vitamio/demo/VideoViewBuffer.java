@@ -24,10 +24,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.vov.vitamio.LibsChecker;
+
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnInfoListener;
+import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
@@ -37,7 +38,7 @@ public class VideoViewBuffer extends Activity implements OnInfoListener, OnBuffe
    * TODO: Set the path variable to a streaming video URL or a local media file
    * path.
    */
-  private String path = "http://pl.youku.com/playlist/m3u8?ts=1394676342&keyframe=0&vid=XNjU4MTc0Mjky&type=mp4";
+  private String path="http://gslb.miaopai.com/stream/3D~8BM-7CZqjZscVBEYr5g__.mp4";
   private Uri uri;
   private VideoView mVideoView;
   private ProgressBar pb;
@@ -46,8 +47,8 @@ public class VideoViewBuffer extends Activity implements OnInfoListener, OnBuffe
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-    if (!LibsChecker.checkVitamioLibs(this))
-      return;
+		Vitamio.isInitialized(getApplicationContext());
+
     setContentView(R.layout.videobuffer);
     mVideoView = (VideoView) findViewById(R.id.buffer);
     pb = (ProgressBar) findViewById(R.id.probar);

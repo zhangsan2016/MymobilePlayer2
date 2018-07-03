@@ -4,12 +4,7 @@ dependencies {
     compile project(':vitamio')
 }
 
-
-
 android {
-//    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
-//    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
-
     compileSdkVersion 26
     buildToolsVersion "27.0.3"
 
@@ -25,6 +20,5 @@ android {
             res.srcDirs = ['res']
         }
     }
-    buildToolsVersion '25.0.0'
 }
 

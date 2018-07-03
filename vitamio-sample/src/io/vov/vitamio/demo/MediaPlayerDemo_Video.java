@@ -25,12 +25,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import io.vov.vitamio.LibsChecker;
+
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.MediaPlayer.OnPreparedListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
+import io.vov.vitamio.Vitamio;
 
 public class MediaPlayerDemo_Video extends Activity implements OnBufferingUpdateListener, OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
 
@@ -58,8 +59,7 @@ public class MediaPlayerDemo_Video extends Activity implements OnBufferingUpdate
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		if (!LibsChecker.checkVitamioLibs(this))
-			return;
+		Vitamio.isInitialized(getApplicationContext());
 		setContentView(R.layout.mediaplayer_2);
 		mPreview = (SurfaceView) findViewById(R.id.surface);
 		holder = mPreview.getHolder();
@@ -75,10 +75,11 @@ public class MediaPlayerDemo_Video extends Activity implements OnBufferingUpdate
 
 			switch (Media) {
 			case LOCAL_VIDEO:
+				path = "";
+
 				/*
 				 * TODO: Set the path variable to a local media file path.
 				 */
-				path = "";
 				if (path == "") {
 					// Tell the user to provide a media file URL.
 					Toast.makeText(MediaPlayerDemo_Video.this, "Please edit MediaPlayerDemo_Video Activity, " + "and set the path variable to your media file path." + " Your media file must be stored on sdcard.", Toast.LENGTH_LONG).show();
@@ -95,7 +96,8 @@ public class MediaPlayerDemo_Video extends Activity implements OnBufferingUpdate
 				 * reasonably interleaved.
 				 * 
 				 */
-				path = "";
+				path="http://gslb.miaopai.com/stream/3D~8BM-7CZqjZscVBEYr5g__.mp4";
+
 				if (path == "") {
 					// Tell the user to provide a media file URL.
 					Toast.makeText(MediaPlayerDemo_Video.this, "Please edit MediaPlayerDemo_Video Activity," + " and set the path variable to your media file URL.", Toast.LENGTH_LONG).show();

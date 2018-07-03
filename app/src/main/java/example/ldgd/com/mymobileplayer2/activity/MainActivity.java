@@ -50,6 +50,10 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 当前界面获取读取权限
+        isGrantExternalRW(MainActivity.this);
+
+
         flMainContent = (FrameLayout) findViewById(R.id.fl_main_content);
         rbVideo = (RadioButton) findViewById(R.id.rb_video);
         rbAudio = (RadioButton) findViewById(R.id.rb_audio);
@@ -87,8 +91,6 @@ public class MainActivity extends FragmentActivity {
         });
 
 
-        // 当前界面获取读取权限
-        isGrantExternalRW(MainActivity.this);
     }
 
     /**
@@ -101,7 +103,7 @@ public class MainActivity extends FragmentActivity {
         // 开启事务
         FragmentTransaction ft = fm.beginTransaction();
         // 替换
-        ft.replace(R.id.fl_main_content,new ReplaceFragment());
+        ft.replace(R.id.fl_main_content, new ReplaceFragment());
         // 提交事务
         ft.commit();
     }
@@ -123,7 +125,7 @@ public class MainActivity extends FragmentActivity {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
             BasePager basePager = getBasePager();
-            if (basePager != null ) {
+            if (basePager != null) {
                 //各个页面的视图
                 return basePager.rootView;
             }
@@ -137,7 +139,8 @@ public class MainActivity extends FragmentActivity {
      * @param activity
      * @return
      */
-    public  boolean isGrantExternalRW(Activity activity) {
+    public boolean isGrantExternalRW(Activity activity) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -148,10 +151,9 @@ public class MainActivity extends FragmentActivity {
 
             return false;
         }
-        rgBottomTag.check(R.id.rb_video);
+        //   rgBottomTag.check(R.id.rb_video);
         return true;
     }
-
 
 
     @Override
@@ -164,7 +166,7 @@ public class MainActivity extends FragmentActivity {
                     rgBottomTag.check(R.id.rb_video);
 
                 } else {
-                    Toast.makeText(MainActivity.this,"获取权限失败，不能使用当前功能",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "获取权限失败，不能使用当前功能", Toast.LENGTH_SHORT).show();
                     this.finish();
                 }
                 return;

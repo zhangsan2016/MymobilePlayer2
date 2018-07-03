@@ -30,6 +30,13 @@
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:launchMode="singleTask"></activity>
 
+
+        <activity
+            android:name=".activity.VitamioVideoPlayerActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:screenOrientation="landscape"
+            android:theme="@style/noAnimation_Theme">
+        </activity>
         <activity
             android:name=".activity.SystemVideoPlayerActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"

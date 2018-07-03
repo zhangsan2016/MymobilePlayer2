@@ -1,1 +1,1 @@
-include ':app', ':vitamio-sample', ':vitamio'
+include ':app', ':checkvitamio', ':vitamio-sample', ':vitamio'

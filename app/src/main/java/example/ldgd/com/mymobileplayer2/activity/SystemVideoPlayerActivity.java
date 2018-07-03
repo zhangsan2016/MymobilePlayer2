@@ -540,15 +540,22 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
 
-        /*    // 传递播放列表
-            Intent intent = new Intent(SystemVideoPlayerActivity.this, SystemVideoPlayerActivity.class);
+            // 传递播放列表
+            Intent intent = new Intent(SystemVideoPlayerActivity.this, VitamioVideoPlayerActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putSerializable("videolist", videolist);
-            intent.putExtras(bundle);
-            intent.putExtra("position", position);
-            SystemVideoPlayerActivity.this.startActivity(intent);*/
+            if(videolist != null && videolist.size() > 0){
+                bundle.putSerializable("videolist", videolist);
+                intent.putExtra("position", position);
+                intent.putExtras(bundle);
+            }else if(uri != null){
+                intent.setData(uri);
+            }
+            SystemVideoPlayerActivity.this.startActivity(intent);
 
-            return false;
+            // 关闭当前播放器
+            SystemVideoPlayerActivity.this.finish();
+
+            return true;
         }
     }
 

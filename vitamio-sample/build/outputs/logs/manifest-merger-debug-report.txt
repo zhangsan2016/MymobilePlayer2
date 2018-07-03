@@ -21,7 +21,7 @@ MERGED from [MymobilePlayer2:vitamio:unspecified] I:\Programming information\pro
 		INJECTED from I:\Programming information\project\MymobilePlayer2\vitamio-sample\AndroidManifest.xml
 		INJECTED from I:\Programming information\project\MymobilePlayer2\vitamio-sample\AndroidManifest.xml
 	android:minSdkVersion
-		ADDED from I:\Programming information\project\MymobilePlayer2\vitamio-sample\AndroidManifest.xml:8:9-35
+		ADDED from I:\Programming information\project\MymobilePlayer2\vitamio-sample\AndroidManifest.xml:8:9-34
 		INJECTED from I:\Programming information\project\MymobilePlayer2\vitamio-sample\AndroidManifest.xml
 		INJECTED from I:\Programming information\project\MymobilePlayer2\vitamio-sample\AndroidManifest.xml
 uses-permission#android.permission.WAKE_LOCK

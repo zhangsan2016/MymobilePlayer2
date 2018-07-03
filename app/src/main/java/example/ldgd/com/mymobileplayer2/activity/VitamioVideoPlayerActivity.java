@@ -34,13 +34,13 @@ import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.LogUtil;
 import example.ldgd.com.mymobileplayer2.util.Utils;
 import example.ldgd.com.mymobileplayer2.view.MyVitamioView;
+import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
 
 import static example.ldgd.com.mymobileplayer2.R.id.iv_system_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_battery;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_current_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_duration;
-import static example.ldgd.com.mymobileplayer2.R.id.videoview;
 
 
 /**
@@ -198,7 +198,14 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // vitamio 初始化
+        if (!LibsChecker.checkVitamioLibs(this))
+            return;
         setContentView(R.layout.activity_vitamio_video_player);
+
+
+        Toast.makeText(this,this.getClass().getSimpleName() + "AAAA",Toast.LENGTH_SHORT).show();
+        LogUtil.e(this.getClass().getSimpleName());
 
         // 初始化数据
         initData();
@@ -315,7 +322,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
         tv_buffer_speed = this.findViewById(R.id.tv_buffer_speed);
         tv_loading_speed = this.findViewById(R.id.tv_loading_speed);
 
-        videoView = this.findViewById(videoview);
+        videoView = this.findViewById(R.id.videoview);
 
         utils = new Utils();
 
@@ -412,6 +419,16 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
         } else if (uri != null) {
             videoView.setVideoURI(uri);
+            videoView.requestFocus();
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    // optional need Vitamio 4.0
+                    mediaPlayer.setPlaybackSpeed(1.0f);
+                }
+            });
+            videoView.start();
+
             //设置视频的名称
             tvVideoName.setText(uri.toString());
             // 判断是否网络资源
@@ -748,7 +765,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     @Override
     protected void onDestroy() {
 
-        this.unregisterReceiver(batteryReceiver);
+     //  this.unregisterReceiver(batteryReceiver);
 
         //移除所有的消息
         myHandler.removeCallbacksAndMessages(null);
