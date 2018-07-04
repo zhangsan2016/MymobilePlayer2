@@ -24,8 +24,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
@@ -42,8 +42,8 @@ public class VideoViewDemo extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		if (!LibsChecker.checkVitamioLibs(this))
-			return;
+
+		Vitamio.isInitialized(getApplicationContext());
 		setContentView(R.layout.videoview);
 		mEditText = (EditText) findViewById(R.id.url);
 		mVideoView = (VideoView) findViewById(R.id.surface_view);

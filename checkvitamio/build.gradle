@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "example.ldgd.com.checkvitamio"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 

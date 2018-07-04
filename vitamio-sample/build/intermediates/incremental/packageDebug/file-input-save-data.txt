@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Tue Jul 03 18:22:29 CST 2018
+#Wed Jul 04 08:24:38 CST 2018
 5.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_
 42.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_
 32.set=ANDROID_RESOURCE
@@ -43,7 +43,7 @@
 63.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
 35.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\armeabi-v7a\\libvao.0.so
 13.set=NATIVE_RESOURCE
-19.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\videobuffer.xml
+19.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\mediacontroller_sreen_size_100.png
 2.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
 29.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable\\scrubber_progress_horizontal_holo_dark.xml
 11.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\armeabi-v7a\\libvvo.j.so
@@ -53,7 +53,7 @@
 43.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
 4.set=ANDROID_RESOURCE
 42.set=ANDROID_RESOURCE
-15.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\mediacontroller_sreen_size_crop.png
+15.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\scrubber_primary_holo.9.png
 53.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
 31.set=ANDROID_RESOURCE
 49.set=NATIVE_RESOURCE
@@ -83,7 +83,7 @@ count=64
 56.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\x86\\libOMX.18.so
 7.set=NATIVE_RESOURCE
 45.set=ANDROID_RESOURCE
-22.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\scrubber_track_holo_dark.9.png
+22.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\media_metadata.xml
 32.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\ic_launcher.png
 34.set=ANDROID_RESOURCE
 26.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\x86\\libvao.0.so
@@ -100,7 +100,7 @@ count=64
 19.set=ANDROID_RESOURCE
 44.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
 52.set=ANDROID_RESOURCE
-16.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\scrubber_primary_holo.9.png
+16.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\mediacontroller_sreen_size_crop.png
 54.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
 3.set=ANDROID_RESOURCE
 20.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
@@ -129,7 +129,7 @@ count=64
 47.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\arm64-v8a\\libOMX.24.so
 57.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\arm64-v8a\\libvvo.j.so
 55.set=NATIVE_RESOURCE
-23.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\media_metadata.xml
+23.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\scrubber_track_holo_dark.9.png
 33.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\x86\\libstlport_shared.so
 6.set=NATIVE_RESOURCE
 17.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\arm64-v8a\\libffmpeg.so
@@ -185,7 +185,7 @@ count=64
 24.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\scrubber_control_disabled_holo.png
 62.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_
 34.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\mediacontroller_screen_fit.png
-18.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-xhdpi-v4\\mediacontroller_sreen_size_100.png
+18.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\videobuffer.xml
 1.base=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main
 54.set=NATIVE_RESOURCE
 28.file=I\:\\Programming information\\project\\MymobilePlayer2\\vitamio-sample\\build\\intermediates\\transforms\\mergeJniLibs\\debug\\folders\\2000\\1f\\main\\lib\\arm64-v8a\\libvplayer.so

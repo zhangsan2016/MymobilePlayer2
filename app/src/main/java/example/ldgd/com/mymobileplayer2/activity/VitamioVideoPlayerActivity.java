@@ -34,13 +34,14 @@ import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.LogUtil;
 import example.ldgd.com.mymobileplayer2.util.Utils;
 import example.ldgd.com.mymobileplayer2.view.MyVitamioView;
-import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.Vitamio;
 
 import static example.ldgd.com.mymobileplayer2.R.id.iv_system_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_battery;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_current_time;
 import static example.ldgd.com.mymobileplayer2.R.id.tv_duration;
+import static example.ldgd.com.mymobileplayer2.R.id.videoview;
 
 
 /**
@@ -199,13 +200,10 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // vitamio 初始化
-        if (!LibsChecker.checkVitamioLibs(this))
-            return;
+        Vitamio.isInitialized(getApplicationContext());
         setContentView(R.layout.activity_vitamio_video_player);
 
-
-        Toast.makeText(this,this.getClass().getSimpleName() + "AAAA",Toast.LENGTH_SHORT).show();
-        LogUtil.e(this.getClass().getSimpleName());
+        Toast.makeText(this,this.getClass().getSimpleName(),Toast.LENGTH_SHORT).show();
 
         // 初始化数据
         initData();
@@ -251,15 +249,20 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
                     // 更新当前系统时间
                     ivSystemTime.setText(getSysteTime());
 
+
                     // 判断是否网络资源，如果是加载播放器缓冲
-                    LogUtil.e("isNetUri = " + isNetUri);
+                 //   LogUtil.e("isNetUri = " + isNetUri);
                     if (isNetUri) {
                         //只有网络资源才有缓存效果
                         int buffer = videoView.getBufferPercentage();  // 0~100
                         int totalBuffer = buffer * seekbarVideo.getMax();
                         int secondaryProgress = totalBuffer / 100;
                         seekbarVideo.setSecondaryProgress(secondaryProgress);
+                    }else {
+                        //本地视频没有缓冲效果
+                        seekbarVideo.setSecondaryProgress(0);
                     }
+
 
                     // 使用监听卡
                     if (!isUseSystem) {
@@ -322,7 +325,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
         tv_buffer_speed = this.findViewById(R.id.tv_buffer_speed);
         tv_loading_speed = this.findViewById(R.id.tv_loading_speed);
 
-        videoView = this.findViewById(R.id.videoview);
+        videoView = this.findViewById(videoview);
 
         utils = new Utils();
 
@@ -418,16 +421,11 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
             tvVideoName.setText(mediaItem.getName());
 
         } else if (uri != null) {
+
+
             videoView.setVideoURI(uri);
+           // videoView.setMediaController(new MediaController(this));
             videoView.requestFocus();
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    // optional need Vitamio 4.0
-                    mediaPlayer.setPlaybackSpeed(1.0f);
-                }
-            });
-            videoView.start();
 
             //设置视频的名称
             tvVideoName.setText(uri.toString());
@@ -525,6 +523,9 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
         @Override
         public void onPrepared(io.vov.vitamio.MediaPlayer mediaPlayer) {
+
+            // 设置播放速度
+            mediaPlayer.setPlaybackSpeed(1.0f);
             //视频播放
             videoView.start();
 

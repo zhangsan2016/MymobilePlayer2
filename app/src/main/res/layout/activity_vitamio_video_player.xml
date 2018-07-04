@@ -24,7 +24,6 @@
     <!-- 加载框 -->
     <include
         android:id="@+id/ll_loading"
-        android:visibility="gone"
         layout="@layout/ll_loading"></include>
 
 
