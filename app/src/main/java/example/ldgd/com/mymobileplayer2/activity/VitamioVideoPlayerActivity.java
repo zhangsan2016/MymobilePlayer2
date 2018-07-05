@@ -1,8 +1,10 @@
 package example.ldgd.com.mymobileplayer2.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
@@ -203,7 +205,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
         Vitamio.isInitialized(getApplicationContext());
         setContentView(R.layout.activity_vitamio_video_player);
 
-        Toast.makeText(this,this.getClass().getSimpleName(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, this.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
 
         // 初始化数据
         initData();
@@ -251,14 +253,14 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
 
                     // 判断是否网络资源，如果是加载播放器缓冲
-                 //   LogUtil.e("isNetUri = " + isNetUri);
+                    //   LogUtil.e("isNetUri = " + isNetUri);
                     if (isNetUri) {
                         //只有网络资源才有缓存效果
                         int buffer = videoView.getBufferPercentage();  // 0~100
                         int totalBuffer = buffer * seekbarVideo.getMax();
                         int secondaryProgress = totalBuffer / 100;
                         seekbarVideo.setSecondaryProgress(secondaryProgress);
-                    }else {
+                    } else {
                         //本地视频没有缓冲效果
                         seekbarVideo.setSecondaryProgress(0);
                     }
@@ -424,7 +426,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
 
             videoView.setVideoURI(uri);
-           // videoView.setMediaController(new MediaController(this));
+            // videoView.setMediaController(new MediaController(this));
             videoView.requestFocus();
 
             //设置视频的名称
@@ -554,21 +556,43 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
 
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-            return false;
+
+            //1.播放的视频格式不支持--跳转到万能播放器继续播放
+            //2.播放网络视频的时候，网络中断---1.如果网络确实断了，可以提示用于网络断了；2.网络断断续续的，重新播放
+            //3.播放的时候本地文件中间有空白---下载做完成
+            showErrorDialog();
+
+            return true; // 不让系统提示
         }
 
 
     }
 
+    private void showErrorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("VitamioViewo 提示");
+        builder.setMessage("抱歉,该视频格式无法播放！");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                VitamioVideoPlayerActivity.this.finish();
+            }
+        });
+        builder.show();
+    }
+
 
     @Override
     public void onClick(View v) {
-        if (v == btnVoice) {  // 静音
+        if (v == btnVoice) {  // 静音0
 
             isMute = !isMute;
             updataVoice(currentVolume, isMute);
 
-        } else if (v == btnSwichPlayer) {
+        } else if (v == btnSwichPlayer) { // 系统播放器和vitamio播放器切换
+
+            showSwichPlayerDialog();
+
         } else if (v == btnExit) { // 退出
             this.finish();
         } else if (v == btnVideoPre) { // 上一个
@@ -587,6 +611,44 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
         //发消息隐藏视频控制面板
         myHandler.removeMessages(HIDE_MEDIACONTROLLER);
         myHandler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
+    }
+
+    private void showSwichPlayerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("vitamio 播放器提示");
+        builder.setMessage("可以尝试使用系统播放器播放");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startSystemPlayer();
+            }
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
+
+    }
+
+    private void startSystemPlayer() {
+
+        // 先关闭当前播放器
+        if (videoView != null) {
+            videoView.stopPlayback();
+        }
+
+        Intent intent = new Intent(this, SystemVideoPlayerActivity.class);
+        if (videolist != null && videolist.size() > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", videolist);
+            bundle.putInt("position", position);
+            intent.putExtras(bundle);
+        } else if (uri != null) {
+            intent.setData(uri);
+        }
+        startActivity(intent);
+
+        // 关闭当前播放器
+        this.finish();
+
     }
 
     private void setStartPause() {
@@ -766,7 +828,7 @@ public class VitamioVideoPlayerActivity extends Activity implements View.OnClick
     @Override
     protected void onDestroy() {
 
-     //  this.unregisterReceiver(batteryReceiver);
+        //  this.unregisterReceiver(batteryReceiver);
 
         //移除所有的消息
         myHandler.removeCallbacksAndMessages(null);

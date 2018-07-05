@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="12"
-            android:text="http://192.168.24.1/赌侠马华.rmvb"
+            android:text="http://192.168.24.1/使用 xUtils3 联网请求数据.avi"
             android:hint="Please input url" >
         </EditText>
 

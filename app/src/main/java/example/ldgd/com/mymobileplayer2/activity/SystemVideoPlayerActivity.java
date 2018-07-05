@@ -1,8 +1,10 @@
 package example.ldgd.com.mymobileplayer2.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
@@ -540,23 +542,27 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
 
-            // 传递播放列表
-            Intent intent = new Intent(SystemVideoPlayerActivity.this, VitamioVideoPlayerActivity.class);
-            Bundle bundle = new Bundle();
-            if(videolist != null && videolist.size() > 0){
-                bundle.putSerializable("videolist", videolist);
-                intent.putExtra("position", position);
-                intent.putExtras(bundle);
-            }else if(uri != null){
-                intent.setData(uri);
-            }
-            SystemVideoPlayerActivity.this.startActivity(intent);
-
-            // 关闭当前播放器
-            SystemVideoPlayerActivity.this.finish();
+            startVitamioPlayer();
 
             return true;
         }
+    }
+
+    private void startVitamioPlayer() {
+        // 传递播放列表
+        Intent intent = new Intent(SystemVideoPlayerActivity.this, VitamioVideoPlayerActivity.class);
+        Bundle bundle = new Bundle();
+        if (videolist != null && videolist.size() > 0) {
+            bundle.putSerializable("videolist", videolist);
+            intent.putExtra("position", position);
+            intent.putExtras(bundle);
+        } else if (uri != null) {
+            intent.setData(uri);
+        }
+        SystemVideoPlayerActivity.this.startActivity(intent);
+
+        // 关闭当前播放器
+        SystemVideoPlayerActivity.this.finish();
     }
 
 
@@ -567,7 +573,21 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             isMute = !isMute;
             updataVoice(currentVolume, isMute);
 
-        } else if (v == btnSwichPlayer) {
+        } else if (v == btnSwichPlayer) { // 系统播放器和vitamio播放器切换
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("systemVideo 提示");
+            builder.setMessage("要切换到万能播放器吗？");
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startVitamioPlayer();
+                }
+            });
+            builder.setNegativeButton("取消",null);
+            builder.show();
+
+
         } else if (v == btnExit) { // 退出
             this.finish();
         } else if (v == btnVideoPre) { // 上一个

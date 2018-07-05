@@ -20,6 +20,7 @@
         <item name="android:textSize">10sp</item>
     </style>
 
+    <!-- 系统播放器和万能播放器之间切换取消动画效果-->
     <style name="noAnimation_Theme" parent="android:Theme">
             <item name="android:windowAnimationStyle">@style/noAnimation</item>
             <item name="android:windowNoTitle">true</item>
@@ -53,5 +54,9 @@
     android:padding="5dp"
     android:textColor="@drawable/rb_video_textcolor_selector"
     android:textSize="10sp"-->
+
+
+
+
 
 </resources>
