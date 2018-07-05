@@ -528,6 +528,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
             // 关闭加载框
             ll_loading.setVisibility(View.GONE);
 
+
         }
     }
 
@@ -584,7 +585,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
                     startVitamioPlayer();
                 }
             });
-            builder.setNegativeButton("取消",null);
+            builder.setNegativeButton("取消", null);
             builder.show();
 
 
@@ -789,6 +790,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
 
         //移除所有的消息
         myHandler.removeCallbacksAndMessages(null);
+
+        // 释放内容接收资源，释放时，先释放子类再释放父类
+        if (batteryReceiver != null) {
+            unregisterReceiver(batteryReceiver);
+        }
 
         super.onDestroy();
 
