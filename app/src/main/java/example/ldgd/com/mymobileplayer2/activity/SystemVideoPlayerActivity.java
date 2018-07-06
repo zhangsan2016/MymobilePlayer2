@@ -786,7 +786,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
     @Override
     protected void onDestroy() {
 
-        this.unregisterReceiver(batteryReceiver);
+     //   this.unregisterReceiver(batteryReceiver);
 
         //移除所有的消息
         myHandler.removeCallbacksAndMessages(null);
