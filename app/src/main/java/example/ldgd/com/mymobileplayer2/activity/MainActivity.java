@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import example.ldgd.com.mymobileplayer2.pager.AudioPager;
 import example.ldgd.com.mymobileplayer2.pager.NetAudioPager;
 import example.ldgd.com.mymobileplayer2.pager.NetVideoPager;
 import example.ldgd.com.mymobileplayer2.pager.VideoPager;
+
+import static example.ldgd.com.mymobileplayer2.R.id.rg_bottom_tag;
 
 public class MainActivity extends FragmentActivity {
 
@@ -54,7 +58,7 @@ public class MainActivity extends FragmentActivity {
         rbVideo = (RadioButton) findViewById(R.id.rb_video);
         rbAudio = (RadioButton) findViewById(R.id.rb_audio);
 
-        rgBottomTag = findViewById(R.id.rg_bottom_tag);
+        rgBottomTag = findViewById(rg_bottom_tag);
 
         basePagers = new ArrayList<>();
         basePagers.add(new VideoPager(this));//添加本地视频页面-0
@@ -172,5 +176,32 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+
+
+    /**
+     * 是否已经退出
+     */
+    private boolean isExit = false;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode ==KeyEvent.KEYCODE_BACK){
+            if(position != 0){//不是第一页面
+                position = 0;
+                rgBottomTag.check(R.id.rb_video);//首页
+                return true;
+            }else  if(!isExit){
+                isExit = true;
+                Toast.makeText(MainActivity.this,"再按一次退出",Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        isExit  = false;
+                    }
+                },2000);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 }
