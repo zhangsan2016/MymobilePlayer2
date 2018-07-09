@@ -7,6 +7,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
+
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -64,7 +68,24 @@ public class NetVideoPagerAdapter extends BaseAdapter {
 
         viewHoder.tv_video_name.setText(mediaItem.getName());
         viewHoder.tv_desc.setText(mediaItem.getDesc());
+
+        // 1.使用 Xutil3加载图片
         x.image().bind(viewHoder.iv_ico, mediaItem.getImageUrl());
+
+        // 2.使用 Glide 加载图片
+        Glide.with(context).load(mediaItem.getImageUrl())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.video_default)
+                .error(R.drawable.video_default)
+                .into(viewHoder.iv_ico);
+
+        // 3.使用 Picasso 加载图片
+        Picasso.with(context).load(mediaItem.getImageUrl())
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.video_default)
+                .error(R.drawable.video_default)
+                .into(viewHoder.iv_ico);
+
 
         return convertView;
     }

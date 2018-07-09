@@ -58,5 +58,14 @@ dependencies {
     compile project(':vitamio')
     compile 'org.xutils:xutils:3.5.0'
 
+    /* glide 图片框架*/
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+//    compile 'com.github.bumptech.glide:glide:4.7.1'
+//    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+
+    /* picasso 图片框架*/
+  //  compile 'com.squareup.picasso:picasso:2.71828'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
 
 }
