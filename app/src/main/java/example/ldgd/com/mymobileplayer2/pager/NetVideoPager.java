@@ -206,13 +206,14 @@ public class NetVideoPager extends BasePager {
 
                 for (int i = 0; i < jsonArray.length(); i++) {
 
+                    // jsonObject.opt 获取数据不存在不报错
                     MediaItem mediaItem = new MediaItem();
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String movieName = jsonObject.getString("movieName");  // name
+                    String movieName = jsonObject.optString("movieName");  // name
                     mediaItem.setName(movieName);
-                    String videoTitle = jsonObject.getString("videoTitle"); // desc
+                    String videoTitle = jsonObject.optString("videoTitle"); // desc
                     mediaItem.setDesc(videoTitle);
-                    String hightUrl = jsonObject.getString("hightUrl");  // data
+                    String hightUrl = jsonObject.optString("hightUrl");  // data
                     mediaItem.setData(hightUrl);
                     String imageUrl = jsonObject.optString("coverImg");//imageUrl
                     mediaItem.setImageUrl(imageUrl);
