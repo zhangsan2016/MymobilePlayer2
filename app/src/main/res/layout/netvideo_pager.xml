@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
+    <example.ldgd.com.mymobileplayer2.xListView.XListView
         android:id="@+id/lv_netvideo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@null"></ListView>
+        android:divider="@null"></example.ldgd.com.mymobileplayer2.xListView.XListView>
 
     <ProgressBar
         android:id="@+id/pb_loading"

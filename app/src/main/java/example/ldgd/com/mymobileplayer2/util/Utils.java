@@ -3,6 +3,7 @@ package example.ldgd.com.mymobileplayer2.util;
 import android.content.Context;
 import android.net.TrafficStats;
 
+import java.text.SimpleDateFormat;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -69,20 +70,31 @@ public class Utils {
 
     /**
      * 获取网络速度
-     *每隔两秒调用一次
+     * 每隔两秒调用一次
+     *
      * @return
      */
     public String getNetSpeed(Context context) {
         String netSpeed = "0 kb/s";
-        long nowTotalRxBytes = TrafficStats.getUidRxBytes(context.getApplicationInfo().uid)==TrafficStats.UNSUPPORTED ? 0 :(TrafficStats.getTotalRxBytes()/1024);//转为KB;
+        long nowTotalRxBytes = TrafficStats.getUidRxBytes(context.getApplicationInfo().uid) == TrafficStats.UNSUPPORTED ? 0 : (TrafficStats.getTotalRxBytes() / 1024);//转为KB;
         long nowTimeStamp = System.currentTimeMillis();
         long speed = ((nowTotalRxBytes - lastTotalRxBytes) * 1000 / (nowTimeStamp - lastTimeStamp));//毫秒转换
 
         lastTimeStamp = nowTimeStamp;
         lastTotalRxBytes = nowTotalRxBytes;
-        netSpeed  = String.valueOf(speed) + " kb/s";
-        return  netSpeed;
+        netSpeed = String.valueOf(speed) + " kb/s";
+        return netSpeed;
 
+    }
+
+
+    /**
+     *  获取系统时间
+     * @return
+     */
+    public static String getSysteTime() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        return format.format(System.currentTimeMillis());
     }
 
 

@@ -1,8 +1,10 @@
 package example.ldgd.com.mymobileplayer2.pager;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -17,11 +19,14 @@ import org.xutils.x;
 import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.R;
+import example.ldgd.com.mymobileplayer2.activity.SystemVideoPlayerActivity;
 import example.ldgd.com.mymobileplayer2.adapter.NetVideoPagerAdapter;
 import example.ldgd.com.mymobileplayer2.base.BasePager;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.Constants;
 import example.ldgd.com.mymobileplayer2.util.LogUtil;
+import example.ldgd.com.mymobileplayer2.util.Utils;
+import example.ldgd.com.mymobileplayer2.xListView.XListView;
 
 /**
  * Created by ldgd on 2018/4/13.
@@ -30,7 +35,7 @@ import example.ldgd.com.mymobileplayer2.util.LogUtil;
 public class NetVideoPager extends BasePager {
 
     @ViewInject(R.id.lv_netvideo)
-    private ListView mListView;
+    private XListView mListView;
 
     @ViewInject(R.id.pb_loading)
     private ProgressBar pb_loading;
@@ -47,6 +52,10 @@ public class NetVideoPager extends BasePager {
      * NetVideoPager的适配器
      */
     private NetVideoPagerAdapter adapter;
+    /**
+     * 是否获取更多
+     */
+    private boolean isLoadMore = false;
 
 
     public NetVideoPager(Context context) {
@@ -60,8 +69,36 @@ public class NetVideoPager extends BasePager {
         // 当前view和xUtil3关联
         x.view().inject(NetVideoPager.this, view);
 
+        // 初始化XListView
+        mListView = (XListView) view.findViewById(R.id.lv_netvideo);
+        mListView.setPullLoadEnable(true);
+        mListView.setOnItemClickListener(new MyOnItemClickListener());
+        mListView.setXListViewListener(new MyIXListViewListener());
+
         return view;
     }
+
+    private class MyIXListViewListener implements XListView.IXListViewListener {
+
+        @Override
+        public void onRefresh() {
+            getDataFromNet();
+        }
+
+        @Override
+        public void onLoadMore() {
+            isLoadMore = true;
+            getDataFromNet();
+
+        }
+    }
+
+    private void onLoad() {
+        mListView.stopRefresh();
+        mListView.stopLoadMore();
+        mListView.setRefreshTime(Utils.getSysteTime());
+    }
+
 
     @Override
     public void initData() {
@@ -86,16 +123,19 @@ public class NetVideoPager extends BasePager {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 LogUtil.e("联网失败==" + ex.getMessage());
+                isLoadMore = false;
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
                 LogUtil.e("联网取消==" + cex.getMessage());
+                isLoadMore = false;
             }
 
             @Override
             public void onFinished() {
                 LogUtil.e("联网结束");
+                isLoadMore = false;
 
             }
         });
@@ -109,17 +149,27 @@ public class NetVideoPager extends BasePager {
      */
     private void processData(String json) {
 
-        mediaItems = parseJson(json);
+        if (!isLoadMore) {
+            mediaItems = parseJson(json);
+            showData();
 
-        // 显示数据到View中
-        showData();
+        } else {
+            //加载更多
+            //要把得到更多的数据，添加到原来的集合中
+//            ArrayList<MediaItem> moreDatas = parseJson(json);
+            isLoadMore = false;
+            mediaItems.addAll(parseJson(json));
+            //刷新适配器
+            adapter.notifyDataSetChanged();
+            onLoad();
+        }
+
 
     }
 
     private void showData() {
 
         if (mediaItems != null && mediaItems.size() > 0) {
-
             //设置适配器
             adapter = new NetVideoPagerAdapter(mContext, mediaItems);
             mListView.setAdapter(adapter);
@@ -132,6 +182,7 @@ public class NetVideoPager extends BasePager {
 
         // 隐藏加载框
         pb_loading.setVisibility(View.GONE);
+        onLoad();
 
 
     }
@@ -145,6 +196,7 @@ public class NetVideoPager extends BasePager {
     private ArrayList<MediaItem> parseJson(String json) {
         ArrayList<MediaItem> mediaItems = new ArrayList<>();
         try {
+
 
             JSONObject jsoonObject = new JSONObject(json);
             JSONArray jsonArray = jsoonObject.getJSONArray("trailers");
@@ -165,10 +217,10 @@ public class NetVideoPager extends BasePager {
                     String imageUrl = jsonObject.optString("coverImg");//imageUrl
                     mediaItem.setImageUrl(imageUrl);
 
+                    //     LogUtil.e("movieName = " + movieName + "\n videoTitle = " + videoTitle + "\n hightUrl = " + hightUrl + "\n imageUrl = " + imageUrl);
+
                     // 添加到集合
                     mediaItems.add(mediaItem);
-
-                    LogUtil.e("movieName = " + movieName + "\n videoTitle = " + videoTitle + "\n hightUrl = " + hightUrl + "\n imageUrl = " + imageUrl);
 
                 }
             }
@@ -178,5 +230,20 @@ public class NetVideoPager extends BasePager {
             e.printStackTrace();
         }
         return mediaItems;
+    }
+
+    private class MyOnItemClickListener implements android.widget.AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+            LogUtil.e("onItemClick = " + position);
+            // 传递播放列表
+            Intent intent = new Intent(mContext, SystemVideoPlayerActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", mediaItems);
+            intent.putExtras(bundle);
+            intent.putExtra("position", (position-1));
+            mContext.startActivity(intent);
+        }
     }
 }

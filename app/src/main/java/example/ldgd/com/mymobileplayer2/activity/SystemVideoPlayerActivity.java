@@ -542,8 +542,11 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
          */
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-
+        //    Toast.makeText(SystemVideoPlayer.this, "播放出错了哦", Toast.LENGTH_SHORT).show();
+            //1.播放的视频格式不支持--跳转到万能播放器继续播放
             startVitamioPlayer();
+            //2.播放网络视频的时候，网络中断---1.如果网络确实断了，可以提示用于网络断了；2.网络断断续续的，重新播放
+            //3.播放的时候本地文件中间有空白---下载做完成
 
             return true;
         }
@@ -563,7 +566,7 @@ public class SystemVideoPlayerActivity extends Activity implements View.OnClickL
         SystemVideoPlayerActivity.this.startActivity(intent);
 
         // 关闭当前播放器
-        SystemVideoPlayerActivity.this.finish();
+        this.finish();
     }
 
 
