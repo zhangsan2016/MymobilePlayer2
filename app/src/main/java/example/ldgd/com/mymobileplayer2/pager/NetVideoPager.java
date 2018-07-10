@@ -3,6 +3,7 @@ package example.ldgd.com.mymobileplayer2.pager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
@@ -23,6 +24,7 @@ import example.ldgd.com.mymobileplayer2.activity.SystemVideoPlayerActivity;
 import example.ldgd.com.mymobileplayer2.adapter.NetVideoPagerAdapter;
 import example.ldgd.com.mymobileplayer2.base.BasePager;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
+import example.ldgd.com.mymobileplayer2.util.CacheUtils;
 import example.ldgd.com.mymobileplayer2.util.Constants;
 import example.ldgd.com.mymobileplayer2.util.LogUtil;
 import example.ldgd.com.mymobileplayer2.util.Utils;
@@ -105,7 +107,13 @@ public class NetVideoPager extends BasePager {
         super.initData();
 
         LogUtil.e("网络视频的数据被初始化了。。。");
-        getDataFromNet();
+
+        // 获取缓存数据
+        String saveJson = CacheUtils.getString(mContext, Constants.NET_URL);
+        if (!TextUtils.isEmpty(saveJson)) {
+            processData(saveJson);
+        }
+       getDataFromNet();
 
 
     }
@@ -117,6 +125,8 @@ public class NetVideoPager extends BasePager {
             @Override
             public void onSuccess(String result) {
                 LogUtil.e("联网成功==" + result);
+                // 缓存数据
+                CacheUtils.putString(mContext, Constants.NET_URL, result);
                 processData(result);
             }
 
@@ -124,6 +134,7 @@ public class NetVideoPager extends BasePager {
             public void onError(Throwable ex, boolean isOnCallback) {
                 LogUtil.e("联网失败==" + ex.getMessage());
                 isLoadMore = false;
+                showData();
             }
 
             @Override
@@ -243,7 +254,7 @@ public class NetVideoPager extends BasePager {
             Bundle bundle = new Bundle();
             bundle.putSerializable("videolist", mediaItems);
             intent.putExtras(bundle);
-            intent.putExtra("position", (position-1));
+            intent.putExtra("position", (position - 1));
             mContext.startActivity(intent);
         }
     }
