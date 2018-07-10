@@ -55,7 +55,7 @@ public class VideoPager extends BasePager {
                     if (mediaItems != null && mediaItems.size() > 0) {
 
                         // 设置adapter
-                        videoPagerAdapter = new VideoPagerAdapter(mContext, mediaItems);
+                        videoPagerAdapter = new VideoPagerAdapter(mContext, mediaItems,true);
                         listview.setAdapter(videoPagerAdapter);
 
                     } else {
