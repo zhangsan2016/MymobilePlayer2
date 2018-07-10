@@ -18,7 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.R;
-import example.ldgd.com.mymobileplayer2.activity.SystemVideoPlayerActivity;
+import example.ldgd.com.mymobileplayer2.activity.AudioPlayerActivity;
 import example.ldgd.com.mymobileplayer2.adapter.VideoPagerAdapter;
 import example.ldgd.com.mymobileplayer2.base.BasePager;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
@@ -103,7 +103,7 @@ public class AudioPager extends BasePager {
                 mContext.startActivity(intent);*/
 
                 // 传递播放列表
-                Intent intent = new Intent(mContext, SystemVideoPlayerActivity.class);
+                Intent intent = new Intent(mContext, AudioPlayerActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("videolist", mediaItems);
                 intent.putExtras(bundle);
