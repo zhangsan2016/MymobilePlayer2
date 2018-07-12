@@ -42,6 +42,7 @@
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:screenOrientation="landscape"
             android:theme="@style/noAnimation_Theme"></activity>
+
         <activity
             android:name=".activity.SystemVideoPlayerActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
@@ -260,8 +261,14 @@
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </activity>
+
+        <service android:name=".service.MusicPlayerService">
+            <intent-filter>
+                <action android:name="com.ldgd.mobileplayer_OPENAUDIO" />
+            </intent-filter>
+        </service>
+
 
     </application>
 
