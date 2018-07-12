@@ -50,7 +50,7 @@ public class AudioPlayerActivity extends Activity {
         Intent intent = new Intent(this, MusicPlayerService.class);
         intent.setAction("com.ldgd.mobileplayer_OPENAUDIO");
         bindService(intent, con, Context.BIND_AUTO_CREATE);
-        startActivity(intent);//不至于实例化多个服务
+        startService(intent);//不至于实例化多个服务
     }
 
     /**
