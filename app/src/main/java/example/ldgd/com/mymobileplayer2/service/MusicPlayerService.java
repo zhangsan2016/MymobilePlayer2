@@ -1,12 +1,22 @@
 package example.ldgd.com.mymobileplayer2.service;
 
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.IMusicPlayerService;
+import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 /**
@@ -16,7 +26,78 @@ import example.ldgd.com.mymobileplayer2.util.LogUtil;
  */
 
 public class MusicPlayerService extends Service {
+    /**
+     * 音乐播放器
+     */
+    private MediaPlayer mediaPlayer;
+    /**
+     * 本地音频集合
+     */
+    private ArrayList<MediaItem> mediaItems;
+    /**
+     * 当前播放位置
+     */
+    private int position;
+    /**
+     * 当前播放的音频文件对象
+     */
+    private MediaItem mediaItem;
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // 加载音乐列表
+        getDataFromLocal();
+
+    }
+
+    private void getDataFromLocal() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 休眠两秒
+                //  SystemClock.sleep(2000);
+                ContentResolver resolver = getContentResolver();
+                Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                String[] objs = {
+                        MediaStore.Audio.Media.DISPLAY_NAME,//音频文件在sdcard中的名字
+                        MediaStore.Audio.Media.DURATION,  //音频总时长
+                        MediaStore.Audio.Media.SIZE,   //音频的文件大小
+                        MediaStore.Audio.Media.DATA,   //音频播放地址
+                        MediaStore.Audio.Media.ARTIST,  //歌曲的演唱者
+                };
+
+                Cursor cursor = resolver.query(uri, objs, null, null, null);
+                if (cursor != null) {
+                    mediaItems = new ArrayList<>();
+                    while (cursor.moveToNext()) {
+
+                        MediaItem mediaItem = new MediaItem();
+
+                        String name = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME));
+                        mediaItem.setName(name);
+
+                        long duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
+                        mediaItem.setDuration(duration);
+
+                        long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
+                        mediaItem.setSize(size);
+
+                        String data = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
+                        mediaItem.setData(data);
+
+                        String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.ARTIST));
+                        mediaItem.setArtist(artist);
+
+                        mediaItems.add(mediaItem);
+                    }
+                    cursor.close();
+                }
+            }
+
+        }).start();
+    }
 
     @Nullable
     @Override
@@ -106,6 +187,58 @@ public class MusicPlayerService extends Service {
      */
     private void openAudio(int position) {
         LogUtil.e("service 中openAudio 调用  == 根据位置打开对应的音频文件，并播放");
+        // 保存当前位置
+        this.position = position;
+        // 获取当前位置音频对象
+        mediaItem = mediaItems.get(position);
+
+        if (mediaItems != null && mediaItems.size() > 0) {
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+                mediaPlayer.reset();
+            }
+            try {
+                mediaPlayer = new MediaPlayer();
+                //设置监听：播放出错，播放完成，准备好
+                mediaPlayer.setOnPreparedListener(new MyOnPreparedListener()); // 准备完成监听
+                mediaPlayer.setOnCompletionListener(new MyOnCompletionListener());  // 播放完成监听
+                mediaPlayer.setOnErrorListener(new MyOnErrorListener());  // 播放出错监听
+
+                // 设置资源文件
+                mediaPlayer.setDataSource(mediaItem.getData());
+                // 异步
+                mediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            Toast.makeText(this, "本地音频列表为空！", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class MyOnPreparedListener implements MediaPlayer.OnPreparedListener {
+
+        @Override
+        public void onPrepared(MediaPlayer mp) {
+            mediaPlayer.start();
+        }
+    }
+
+    private class MyOnErrorListener implements MediaPlayer.OnErrorListener {
+
+        @Override
+        public boolean onError(MediaPlayer mp, int what, int extra) {
+            return false;
+        }
+    }
+
+    private class MyOnCompletionListener implements MediaPlayer.OnCompletionListener {
+
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+
+        }
     }
 
     /**

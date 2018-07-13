@@ -33,7 +33,8 @@
 
         <activity
             android:name=".activity.AudioPlayerActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/noAnimation_Theme">
 
         </activity>
 

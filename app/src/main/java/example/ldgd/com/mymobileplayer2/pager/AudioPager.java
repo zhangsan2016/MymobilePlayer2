@@ -32,7 +32,7 @@ public class AudioPager extends BasePager {
 
 
     /**
-     * 本地视屏集合
+     * 本地音频集合
      */
     private ArrayList<MediaItem> mediaItems;
     /**
@@ -121,11 +121,11 @@ public class AudioPager extends BasePager {
     public void initData() {
         super.initData();
 
-        getVideo();
+        getMusic();
 
     }
 
-    public void getVideo() {
+    public void getMusic() {
 
         new Thread(new Runnable() {
             @Override
