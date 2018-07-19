@@ -83,6 +83,8 @@ interface IMusicPlayerService {
      */
      boolean isPlaying();
 
+     void seeto(int progress);
+
 
 
 

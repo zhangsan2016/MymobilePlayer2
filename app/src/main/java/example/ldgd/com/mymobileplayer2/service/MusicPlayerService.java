@@ -26,6 +26,7 @@ import example.ldgd.com.mymobileplayer2.util.LogUtil;
  */
 
 public class MusicPlayerService extends Service {
+    public static final String OPENAUDIO = "com.ldgd.mobileplayer_OPENAUDIO";
     /**
      * 音乐播放器
      */
@@ -179,6 +180,11 @@ public class MusicPlayerService extends Service {
         public boolean isPlaying() throws RemoteException {
             return service.isPlaying();
         }
+
+        @Override
+        public void seeto(int progress) throws RemoteException {
+            mediaPlayer.seekTo(progress);
+        }
     };
 
 
@@ -194,7 +200,7 @@ public class MusicPlayerService extends Service {
 
         if (mediaItems != null && mediaItems.size() > 0) {
             if (mediaPlayer != null) {
-                mediaPlayer.release();
+            //    mediaPlayer.release();
                 mediaPlayer.reset();
             }
             try {
@@ -221,7 +227,14 @@ public class MusicPlayerService extends Service {
 
         @Override
         public void onPrepared(MediaPlayer mp) {
+
             mediaPlayer.start();
+
+            // 发送广播
+            Intent intent = new Intent(OPENAUDIO);
+            sendBroadcast(intent);
+
+
         }
     }
 
@@ -245,21 +258,21 @@ public class MusicPlayerService extends Service {
      * 播放音乐
      */
     private void start() {
-
+        mediaPlayer.start();
     }
 
     /**
      * 暂停音乐
      */
     private void pause() {
-
+        mediaPlayer.pause();
     }
 
     /**
      * 停止音乐
      */
     private void stop() {
-
+        mediaPlayer.stop();
     }
 
     /**
@@ -269,7 +282,7 @@ public class MusicPlayerService extends Service {
      */
     private int getCurrentPosition() {
 
-        return 0;
+        return mediaPlayer.getCurrentPosition();
     }
 
     /**
@@ -279,7 +292,7 @@ public class MusicPlayerService extends Service {
      */
     private int getDuration() {
 
-        return 0;
+        return mediaPlayer.getDuration();
     }
 
     /**
@@ -289,12 +302,12 @@ public class MusicPlayerService extends Service {
      */
     private String getArtist() {
 
-        return null;
+        return mediaItems.get(position).getArtist();
     }
 
     private String getName() {
 
-        return null;
+        return mediaItems.get(position).getName();
     }
 
     /**
@@ -304,7 +317,7 @@ public class MusicPlayerService extends Service {
      */
     private String getAudioPath() {
 
-        return null;
+        return mediaItems.get(position).getData();
     }
 
 
@@ -346,7 +359,7 @@ public class MusicPlayerService extends Service {
      */
     private boolean isPlaying() {
 
-        return false;
+        return mediaPlayer.isPlaying();
     }
 
 

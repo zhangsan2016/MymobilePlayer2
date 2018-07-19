@@ -46,15 +46,17 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginRight="8dp"
-            android:text="00:00/00/00"
+            android:text="00:00/00:00"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
         <SeekBar
+            android:id="@+id/seekbar_voice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
