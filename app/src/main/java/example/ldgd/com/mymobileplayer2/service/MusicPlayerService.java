@@ -1,23 +1,30 @@
 package example.ldgd.com.mymobileplayer2.service;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import example.ldgd.com.mymobileplayer2.IMusicPlayerService;
+import example.ldgd.com.mymobileplayer2.R;
+import example.ldgd.com.mymobileplayer2.activity.AudioPlayerActivity;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
-import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 /**
  * Created by ldgd on 2018/7/10.
@@ -43,6 +50,10 @@ public class MusicPlayerService extends Service {
      * 当前播放的音频文件对象
      */
     private MediaItem mediaItem;
+    /**
+     * 消息管理器
+     */
+    private NotificationManager notificationManager;
 
     @Override
     public void onCreate() {
@@ -192,7 +203,6 @@ public class MusicPlayerService extends Service {
      * 根据位置打开对应的音频文件，并播放
      */
     private void openAudio(int position) {
-        LogUtil.e("service 中openAudio 调用  == 根据位置打开对应的音频文件，并播放");
         // 保存当前位置
         this.position = position;
         // 获取当前位置音频对象
@@ -200,7 +210,7 @@ public class MusicPlayerService extends Service {
 
         if (mediaItems != null && mediaItems.size() > 0) {
             if (mediaPlayer != null) {
-            //    mediaPlayer.release();
+                //    mediaPlayer.release();
                 mediaPlayer.reset();
             }
             try {
@@ -228,7 +238,7 @@ public class MusicPlayerService extends Service {
         @Override
         public void onPrepared(MediaPlayer mp) {
 
-            mediaPlayer.start();
+            start();
 
             // 发送广播
             Intent intent = new Intent(OPENAUDIO);
@@ -258,7 +268,49 @@ public class MusicPlayerService extends Service {
      * 播放音乐
      */
     private void start() {
+
+        // 播放音乐
         mediaPlayer.start();
+
+        String id = "my_channel_01";
+        String name = "我是渠道名字";
+        Notification notification = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            // 使用  NotificationCompat兼容所有版本
+            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // 8.0以上版本需要创建channel
+            NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+            notificationManager.createNotificationChannel(mChannel);
+
+            Intent intent = new Intent(this, AudioPlayerActivity.class);
+            intent.putExtra("notification", true);//标识来自状态拦
+            PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+            notification = new NotificationCompat.Builder(this, "PUSH_NOTIFY_ID")
+                    .setContentIntent(pi)
+                    .setContentTitle("我的音乐")
+                    .setContentText("正在播放：" + getName())
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setChannelId(id) // channel id
+                    .build();
+        } else {
+            // 使用  NotificationCompat兼容所有版本
+            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            Intent intent = new Intent(this, AudioPlayerActivity.class);
+            intent.putExtra("notification", true);//标识来自状态拦
+            PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+            notification = new NotificationCompat.Builder(this, "PUSH_NOTIFY_ID")
+                    .setContentIntent(pi)
+                    .setContentTitle("我的音乐")
+                    .setContentText("正在播放：" + getName())
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .build();
+
+        }
+        notificationManager.notify(1, notification);
+
+
     }
 
     /**
@@ -266,6 +318,7 @@ public class MusicPlayerService extends Service {
      */
     private void pause() {
         mediaPlayer.pause();
+        notificationManager.cancel(1);
     }
 
     /**
@@ -302,12 +355,12 @@ public class MusicPlayerService extends Service {
      */
     private String getArtist() {
 
-        return mediaItems.get(position).getArtist();
+        return mediaItem.getArtist();
     }
 
     private String getName() {
 
-        return mediaItems.get(position).getName();
+        return mediaItem.getName();
     }
 
     /**
