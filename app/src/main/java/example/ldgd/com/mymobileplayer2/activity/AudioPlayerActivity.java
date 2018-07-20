@@ -228,7 +228,14 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
             setPlaymode();
 
-        } else if (v == btnAudioPre) {
+        } else if (v == btnAudioPre) {  // 上一首
+
+            try {
+                service.pre();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
         } else if (v == btnAudioStartPause) {// 播放暂停
 
             try {
