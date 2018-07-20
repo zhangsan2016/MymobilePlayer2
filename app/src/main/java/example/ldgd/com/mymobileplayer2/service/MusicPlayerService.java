@@ -38,7 +38,7 @@ public class MusicPlayerService extends Service {
     /**
      * 顺序播放
      */
-    public static final int REPEAT_ORDER = 1;
+    public static final int REPEAT_ORDER = 1;  // 播放到最后一首，不会重新从0开始
     /**
      * 单曲循环
      */
@@ -273,6 +273,7 @@ public class MusicPlayerService extends Service {
 
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
+            next();
             return false;
         }
     }
@@ -281,7 +282,7 @@ public class MusicPlayerService extends Service {
 
         @Override
         public void onCompletion(MediaPlayer mp) {
-
+            next();
         }
     }
 
@@ -399,7 +400,73 @@ public class MusicPlayerService extends Service {
      * 播放下一个音频
      */
     private void next() {
+        // 根据当前的播放模式设置下一个播放的位置
+        // 获取下一个播放位置的位置
+        setNextPosition();
 
+        // 根据模式下标播放
+        openNextAudio();
+
+    }
+
+
+
+    private void setNextPosition() {
+        try {
+            int playmode = getPlayMode();
+            if (playmode == MusicPlayerService.REPEAT_ORDER) {
+
+                position++;
+
+            } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+                position++;
+                if (position >= mediaItems.size()) {
+                    position = 0;
+                }
+
+
+            } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+
+                position++;
+                if (position >= mediaItems.size()) {
+                    position = 0;
+                }
+
+            } else {
+                position++;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void openNextAudio() {
+        try {
+            int playmode = getPlayMode();
+            if (playmode == MusicPlayerService.REPEAT_ORDER) {
+                  if(position >= mediaItems.size()){
+                      position = mediaItems.size()-1;
+                  }
+                  openAudio(position);
+
+            } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+
+                openAudio(position);
+
+            } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+                openAudio(position);
+            } else {
+                if(position >= mediaItems.size()){
+                    position = 0;
+                }
+                openAudio(position);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

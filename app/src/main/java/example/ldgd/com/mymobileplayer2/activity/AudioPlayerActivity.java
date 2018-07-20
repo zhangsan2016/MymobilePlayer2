@@ -172,15 +172,16 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         try {
             int playmode = service.getPlayMode();
             if (playmode == MusicPlayerService.REPEAT_ORDER) {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
 
             } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
 
             } else if (playmode == MusicPlayerService.REPEAT_ALL) {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
+
             } else {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
             }
 
         } catch (RemoteException e) {
@@ -227,8 +228,8 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
             setPlaymode();
 
-        } else if (v == btnAudioPre) {  // 播放暂停
-        } else if (v == btnAudioStartPause) {
+        } else if (v == btnAudioPre) {
+        } else if (v == btnAudioStartPause) {// 播放暂停
 
             try {
                 if (service.isPlaying()) {
@@ -244,7 +245,14 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
                 e.printStackTrace();
             }
-        } else if (v == btnAudioNext) {
+        } else if (v == btnAudioNext) { // 下一首
+
+            try {
+                service.next();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
         } else if (v == btnLyrc) {
 
         }
@@ -289,18 +297,18 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         try {
             int playmode = service.getPlayMode();
             if (playmode == MusicPlayerService.REPEAT_ORDER) {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
                 Toast.makeText(this, "顺序播放", Toast.LENGTH_SHORT).show();
 
             } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
                 Toast.makeText(this, "单曲循环", Toast.LENGTH_SHORT).show();
 
             } else if (playmode == MusicPlayerService.REPEAT_ALL) {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
                 Toast.makeText(this, "全部循环", Toast.LENGTH_SHORT).show();
             } else {
-                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
                 Toast.makeText(this, "顺序播放", Toast.LENGTH_SHORT).show();
             }
 
