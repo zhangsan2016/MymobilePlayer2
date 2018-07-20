@@ -25,6 +25,7 @@ import example.ldgd.com.mymobileplayer2.IMusicPlayerService;
 import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.activity.AudioPlayerActivity;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
+import example.ldgd.com.mymobileplayer2.util.CacheUtils;
 
 /**
  * Created by ldgd on 2018/7/10.
@@ -34,6 +35,23 @@ import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 
 public class MusicPlayerService extends Service {
     public static final String OPENAUDIO = "com.ldgd.mobileplayer_OPENAUDIO";
+    /**
+     * 顺序播放
+     */
+    public static final int REPEAT_ORDER = 1;
+    /**
+     * 单曲循环
+     */
+    public static final int REPEAT_SINGLE = 2;
+    /**
+     * 全部循环
+     */
+    public static final int REPEAT_ALL = 3;
+    /**
+     * 播放模式
+     */
+    private int playerMode = REPEAT_ORDER;
+
     /**
      * 音乐播放器
      */
@@ -55,10 +73,13 @@ public class MusicPlayerService extends Service {
      */
     private NotificationManager notificationManager;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        // 获取播放模式
+        this.playerMode = CacheUtils.getPlaymode(this, "playmode");
         // 加载音乐列表
         getDataFromLocal();
 
@@ -393,6 +414,9 @@ public class MusicPlayerService extends Service {
      */
     private void setPlayMode(int playMode) {
 
+        this.playerMode = playMode;
+        // 存储播放模式到sharedPreferences
+        CacheUtils.putPlaymode(this, "playmode", playerMode);
     }
 
     /**
@@ -401,8 +425,7 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private int getPlayMode() {
-
-        return 0;
+        return playerMode;
     }
 
     /**

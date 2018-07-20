@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import example.ldgd.com.mymobileplayer2.IMusicPlayerService;
 import example.ldgd.com.mymobileplayer2.R;
@@ -40,6 +41,10 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     private IMusicPlayerService service;
     private int position = 0;
     private Utils utils;
+    /**
+     * 判断是否从notification进入音乐播放界面
+     */
+    private boolean notification;
 
     private TextView tvArtist;
     private TextView tvName;
@@ -126,6 +131,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
      */
     private void getData() {
         position = getIntent().getIntExtra("position", 0);
+        notification = getIntent().getBooleanExtra("notification", false);
     }
 
     private ServiceConnection con = new ServiceConnection() {
@@ -135,11 +141,15 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
             //服务的代理类，通过它可以调用服务的方法
             service = IMusicPlayerService.Stub.asInterface(iBinder);
 
-            if (service != null) {
-                try {
-                    service.openAudio(position);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            if (!notification) {
+                if (service != null) {
+                    try {
+                        service.openAudio(position);
+                        // 检查当前播放模式
+                        checkPlayMode();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -157,6 +167,27 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
             }
         }
     };
+
+    private void checkPlayMode() {
+        try {
+            int playmode = service.getPlayMode();
+            if (playmode == MusicPlayerService.REPEAT_ORDER) {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+
+            } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
+
+            } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
+            } else {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     private void initView() {
         ivIcon = this.findViewById(R.id.iv_icon);
@@ -192,7 +223,9 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        if (v == btnAudioPlaymode) {
+        if (v == btnAudioPlaymode) {  // 播放模式
+
+            setPlaymode();
 
         } else if (v == btnAudioPre) {  // 播放暂停
         } else if (v == btnAudioStartPause) {
@@ -215,6 +248,66 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         } else if (v == btnLyrc) {
 
         }
+    }
+
+    /**
+     * 设置播放模式
+     */
+    private void setPlaymode() {
+
+        try {
+            int playmode = service.getPlayMode();
+            if (playmode == MusicPlayerService.REPEAT_ORDER) {
+                //  btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+                playmode = MusicPlayerService.REPEAT_SINGLE;
+
+            } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+
+                //btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
+                playmode = MusicPlayerService.REPEAT_ALL;
+
+            } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+                //  btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
+                playmode = MusicPlayerService.REPEAT_ORDER;
+            } else {
+                playmode = MusicPlayerService.REPEAT_ORDER;
+            }
+
+            service.setPlayMode(playmode);
+
+            //设置图片
+            showPlaymode();
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void showPlaymode() {
+        try {
+            int playmode = service.getPlayMode();
+            if (playmode == MusicPlayerService.REPEAT_ORDER) {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+                Toast.makeText(this, "顺序播放", Toast.LENGTH_SHORT).show();
+
+            } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
+                Toast.makeText(this, "单曲循环", Toast.LENGTH_SHORT).show();
+
+            } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
+                Toast.makeText(this, "全部循环", Toast.LENGTH_SHORT).show();
+            } else {
+                btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_single_selector);
+                Toast.makeText(this, "顺序播放", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -251,7 +344,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         super.onDestroy();
         unregisterReceiver(receiver);
 
-        if(con != null){
+        if (con != null) {
             unbindService(con);
             con = null;  // 让系统更快回收
 
