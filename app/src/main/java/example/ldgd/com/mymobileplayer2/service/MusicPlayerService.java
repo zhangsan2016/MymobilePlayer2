@@ -291,6 +291,13 @@ public class MusicPlayerService extends Service {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        notificationManager.cancel(1);
+
+    }
+
     /**
      * 播放音乐
      */

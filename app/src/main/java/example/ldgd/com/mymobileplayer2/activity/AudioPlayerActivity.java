@@ -31,6 +31,7 @@ import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.service.MusicPlayerService;
 import example.ldgd.com.mymobileplayer2.util.Utils;
+import example.ldgd.com.mymobileplayer2.view.ShowLyricView;
 
 
 /**
@@ -41,6 +42,7 @@ import example.ldgd.com.mymobileplayer2.util.Utils;
 
 public class AudioPlayerActivity extends Activity implements View.OnClickListener {
     private static final int PROGRESS = 1;
+    private static final int SHOW_LYRIC = 2;
     private ImageView ivIcon;
     //服务的代理类，通过它可以调用服务的方法
     private IMusicPlayerService service;
@@ -62,6 +64,10 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     private MyReceiver receiver;
     private SeekBar seekbarVoice;
     private TextView tvTime;
+    /**
+     * 自定义歌词类
+     */
+    private ShowLyricView showlyricview;
 
     private Handler MyHander = new Handler() {
         @Override
@@ -69,8 +75,23 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
             super.handleMessage(msg);
 
             switch (msg.what) {
+                case SHOW_LYRIC:  // 显示歌词
 
-                case PROGRESS:
+                    try {
+                        // 得到当前进度
+                        int progress = service.getCurrentPosition();
+                        // 把进度传递到showLyricView控件，计算歌词显示位置
+                        showlyricview.setShowNextLyric(position);
+                        // 实时更新歌词
+                        MyHander.removeMessages(SHOW_LYRIC);
+                        MyHander.sendEmptyMessage(SHOW_LYRIC);
+
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+                case PROGRESS:  // 跟新播放界面
 
                     try {
                         // 设置当前进度
@@ -132,7 +153,13 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     public void onMessageEvent(MediaItem mediaItem) {
 
         showViewData();
+        //发消息开始歌词同步
+        showLyric();
 
+    }
+
+    private void showLyric() {
+        MyHander.sendEmptyMessage(SHOW_LYRIC);
     }
 
     private void initReceiver() {
@@ -227,6 +254,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         btnLyrc = (Button) findViewById(R.id.btn_lyrc);
         seekbarVoice = (SeekBar) findViewById(R.id.seekbar_voice);
         tvTime = findViewById(R.id.tv_time);
+        showlyricview = this.findViewById(R.id.showlyricview);
 
         btnAudioPlaymode.setOnClickListener(this);
         btnAudioPre.setOnClickListener(this);
