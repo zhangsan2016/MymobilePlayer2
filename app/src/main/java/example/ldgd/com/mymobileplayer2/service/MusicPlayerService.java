@@ -18,6 +18,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -261,9 +263,12 @@ public class MusicPlayerService extends Service {
 
             start();
 
+            // 使用EventBus回调
+            EventBus.getDefault().post(new MediaItem());
+
             // 发送广播
-            Intent intent = new Intent(OPENAUDIO);
-            sendBroadcast(intent);
+         /*   Intent intent = new Intent(OPENAUDIO);
+            sendBroadcast(intent);*/
 
 
         }
@@ -547,6 +552,14 @@ public class MusicPlayerService extends Service {
         this.playerMode = playMode;
         // 存储播放模式到sharedPreferences
         CacheUtils.putPlaymode(this, "playmode", playerMode);
+
+        if( this.playerMode==MusicPlayerService.REPEAT_SINGLE){
+            //单曲循环播放-不会触发播放完成的回调
+            mediaPlayer.setLooping(true);
+        }else{
+            //不循环播放
+            mediaPlayer.setLooping(false);
+        }
     }
 
     /**
