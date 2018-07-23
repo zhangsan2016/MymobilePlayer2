@@ -81,7 +81,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                         // 得到当前进度
                         int progress = service.getCurrentPosition();
                         // 把进度传递到showLyricView控件，计算歌词显示位置
-                        showlyricview.setShowNextLyric(position);
+                        showlyricview.setShowNextLyric(progress);
                         // 实时更新歌词
                         MyHander.removeMessages(SHOW_LYRIC);
                         MyHander.sendEmptyMessage(SHOW_LYRIC);

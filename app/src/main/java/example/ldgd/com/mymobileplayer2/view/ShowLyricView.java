@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import example.ldgd.com.mymobileplayer2.domain.Lyric;
  * 说明：实现了歌词同步
  */
 
-public class ShowLyricView extends View {
+public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 画笔
@@ -42,6 +42,18 @@ public class ShowLyricView extends View {
      * 歌词字体的高度
      */
     private float textHeight = 20;
+    /**
+     * 当前播放的进度
+     */
+    private int currentPosition;
+    /**
+     * 时间戳，什么时刻到高亮哪句歌词
+     */
+    private long timepoint;
+    /**
+     * 高亮显示的时间或者休眠时间
+     */
+    private long sleepTime;
 
 
     public ShowLyricView(Context context) {
@@ -84,7 +96,7 @@ public class ShowLyricView extends View {
                 if (tempY < 0) {
                     break;
                 }
-                canvas.drawText(preContent, width / 2, tempY, bluePaint);
+                canvas.drawText(preContent, width / 2, tempY, whitePaint);
             }
 
 
@@ -97,7 +109,7 @@ public class ShowLyricView extends View {
                 if (tempY > hight) {
                     break;
                 }
-                canvas.drawText(preContent, width / 2, tempY, bluePaint);
+                canvas.drawText(preContent, width / 2, tempY, whitePaint);
             }
 
 
@@ -110,15 +122,17 @@ public class ShowLyricView extends View {
 
     private void initData() {
         bluePaint = new Paint();
-        bluePaint.setColor(Color.BLUE);
+        bluePaint.setColor(Color.GREEN);
         bluePaint.setTextSize(textHeight);
         bluePaint.setAntiAlias(true);
         bluePaint.setTextAlign(Paint.Align.CENTER); // 字体设置从中间对齐
 
         whitePaint = new Paint();
-        whitePaint.setColor(Color.BLUE);
+        whitePaint.setColor(Color.WHITE);
         whitePaint.setTextSize(textHeight);
+        whitePaint.setTextAlign(Paint.Align.CENTER); // 字体设置从中间对齐
         whitePaint.setAntiAlias(true);
+
 
         lyrics = new ArrayList<>();
         // 测试歌词
@@ -133,8 +147,30 @@ public class ShowLyricView extends View {
 
     /**
      * 根据当前播放的位置，找出该高亮显示哪一句歌词
+     *
+     * @param currentPosition
      */
-    public void setShowNextLyric(int position) {
+    public void setShowNextLyric(int currentPosition) {
+
+        this.currentPosition = currentPosition;
+
+        if (lyrics == null && lyrics.size() == 0) {
+            return;
+        }
+
+        for (int i = 1; i < lyrics.size(); i++) {
+            if (lyrics.get(i).getTimepoint() > currentPosition) {
+                int tempIndex = i - 1;
+                if (lyrics.get(tempIndex).getTimepoint() <= currentPosition) {
+                    index = tempIndex;
+                    timepoint = lyrics.get(index).getTimepoint();
+                    sleepTime = lyrics.get(index).getSleepTime();
+                }
+
+            }
+
+        }
+
 
         // 主线程刷新
         invalidate();
