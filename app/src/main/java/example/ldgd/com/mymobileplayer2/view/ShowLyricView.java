@@ -76,6 +76,14 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
         hight = h;
     }
 
+    /**
+     *  设置歌词列表
+     * @param lyrics
+     */
+    public void setLyrics(List<Lyric> lyrics) {
+        this.lyrics = lyrics;
+    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -137,7 +145,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
         // 测试歌词
         for (int i = 0; i < 1000; i++) {
             Lyric lyric = new Lyric();
-            lyric.setTimepoint((1500 * i)); // 显示的时间
+            lyric.setTimePoint((1500 * i)); // 显示的时间
             lyric.setSleepTime((1000 * i));  // 高亮显示时间
             lyric.setContent("BBBBBBBBBBBBBBBBBBBBBBBBB");
             lyrics.add(lyric);
@@ -158,18 +166,17 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
         }
 
         for (int i = 1; i < lyrics.size(); i++) {
-            if (lyrics.get(i).getTimepoint() > currentPosition) {
+            if (lyrics.get(i).getTimePoint() > currentPosition) {
                 int tempIndex = i - 1;
-                if (lyrics.get(tempIndex).getTimepoint() <= currentPosition) {
+                if (lyrics.get(tempIndex).getTimePoint() <= currentPosition) {
                     index = tempIndex;
-                    timepoint = lyrics.get(index).getTimepoint();
+                    timepoint = lyrics.get(index).getTimePoint();
                     sleepTime = lyrics.get(index).getSleepTime();
                 }
 
             }
 
         }
-
 
         // 主线程刷新
         invalidate();

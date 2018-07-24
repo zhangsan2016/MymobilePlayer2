@@ -26,10 +26,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+
 import example.ldgd.com.mymobileplayer2.IMusicPlayerService;
 import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.service.MusicPlayerService;
+import example.ldgd.com.mymobileplayer2.util.LyricUtils;
 import example.ldgd.com.mymobileplayer2.util.Utils;
 import example.ldgd.com.mymobileplayer2.view.ShowLyricView;
 
@@ -159,7 +162,30 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     }
 
     private void showLyric() {
-        MyHander.sendEmptyMessage(SHOW_LYRIC);
+
+        LyricUtils  lyricUtils = new LyricUtils();
+
+        try {
+            String  path = service.getAudioPath();
+            File file = new File(path + ".lrc");
+            if(!file.exists()){
+                file = new File(path + ".txt");
+            }
+            lyricUtils.readLyricFile(file);
+
+            // 把当前解析好的歌词集合设置到自定义控件中
+            showlyricview.setLyrics(lyricUtils.getLyrics());
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+        // 存在歌词才刷新
+        if(lyricUtils.isExistsLyric()){
+            MyHander.sendEmptyMessage(SHOW_LYRIC);
+        }
+
     }
 
     private void initReceiver() {

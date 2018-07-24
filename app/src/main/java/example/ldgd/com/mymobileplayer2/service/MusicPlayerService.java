@@ -404,7 +404,7 @@ public class MusicPlayerService extends Service {
      */
     private String getAudioPath() {
 
-        return mediaItems.get(position).getData();
+        return mediaItem.getData();
     }
 
 

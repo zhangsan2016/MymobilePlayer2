@@ -15,7 +15,7 @@ public class Lyric {
     /**
      *  时间戳
      */
-    private long timepoint;
+    private long timePoint;
     /**
      * 高亮显示时间
      */
@@ -32,12 +32,12 @@ public class Lyric {
         this.content = content;
     }
 
-    public long getTimepoint() {
-        return timepoint;
+    public long getTimePoint() {
+        return timePoint;
     }
 
-    public void setTimepoint(long timepoint) {
-        this.timepoint = timepoint;
+    public void setTimePoint(long timePoint) {
+        this.timePoint = timePoint;
     }
 
     public long getSleepTime() {
