@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import example.ldgd.com.mymobileplayer2.domain.Lyric;
@@ -141,7 +140,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
         whitePaint.setAntiAlias(true);
 
 
-        lyrics = new ArrayList<>();
+    /*    lyrics = new ArrayList<>();
         // 测试歌词
         for (int i = 0; i < 1000; i++) {
             Lyric lyric = new Lyric();
@@ -149,7 +148,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
             lyric.setSleepTime((1000 * i));  // 高亮显示时间
             lyric.setContent("BBBBBBBBBBBBBBBBBBBBBBBBB");
             lyrics.add(lyric);
-        }
+        }*/
     }
 
     /**

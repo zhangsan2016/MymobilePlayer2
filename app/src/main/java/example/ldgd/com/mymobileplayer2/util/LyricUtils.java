@@ -138,7 +138,7 @@ public class LyricUtils {
                     if (times[j] != 0) { // 有时间戳
 
                         lyric.setContent(content);
-                        lyric.setSleepTime(times[j]);
+                        lyric.setTimePoint(times[j]);
 
                         // 添加到集合中
                         lyrics.add(lyric);
@@ -213,35 +213,5 @@ public class LyricUtils {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

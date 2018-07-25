@@ -81,6 +81,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                 case SHOW_LYRIC:  // 显示歌词
 
                     try {
+
                         // 得到当前进度
                         int progress = service.getCurrentPosition();
                         // 把进度传递到showLyricView控件，计算歌词显示位置
@@ -163,12 +164,15 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
     private void showLyric() {
 
-        LyricUtils  lyricUtils = new LyricUtils();
+        LyricUtils lyricUtils = new LyricUtils();
 
         try {
-            String  path = service.getAudioPath();
+            String path = service.getAudioPath();
+            // 路径去掉“.mp3”
+            path = path.substring(0, path.lastIndexOf("."));
+
             File file = new File(path + ".lrc");
-            if(!file.exists()){
+            if (!file.exists()) {
                 file = new File(path + ".txt");
             }
             lyricUtils.readLyricFile(file);
@@ -182,7 +186,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
 
         // 存在歌词才刷新
-        if(lyricUtils.isExistsLyric()){
+        if (lyricUtils.isExistsLyric()) {
             MyHander.sendEmptyMessage(SHOW_LYRIC);
         }
 
