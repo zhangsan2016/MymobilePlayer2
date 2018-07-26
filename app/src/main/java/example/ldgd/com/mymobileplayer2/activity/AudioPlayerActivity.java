@@ -156,9 +156,12 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 0)
     public void onMessageEvent(MediaItem mediaItem) {
 
+        // 显示当前播放信息
         showViewData();
         //发消息开始歌词同步
         showLyric();
+        // 检测播放状态
+        checkPlayMode();
 
     }
 
@@ -266,9 +269,17 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                 btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
             }
 
+            // 检测播放状态显示对应的播放暂停背景
+            if (service.isPlaying()) {
+                btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_pause_selector);
+            } else {
+                btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_start_selector);
+            }
+
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
 
     }
 

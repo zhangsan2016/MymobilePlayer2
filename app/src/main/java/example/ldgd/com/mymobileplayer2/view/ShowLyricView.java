@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import java.util.List;
 
 import example.ldgd.com.mymobileplayer2.domain.Lyric;
+import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 /**
  * Created by ldgd on 2018/7/23.
@@ -43,15 +44,15 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 当前播放的进度
      */
-    private int currentPosition;
+    private float currentPosition;
     /**
      * 时间戳，什么时刻到高亮哪句歌词
      */
-    private long timepoint;
+    private float timePoint;
     /**
      * 高亮显示的时间或者休眠时间
      */
-    private long sleepTime;
+    private float sleepTime;
 
 
     public ShowLyricView(Context context) {
@@ -76,7 +77,8 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     *  设置歌词列表
+     * 设置歌词列表
+     *
      * @param lyrics
      */
     public void setLyrics(List<Lyric> lyrics) {
@@ -89,6 +91,22 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
         super.onDraw(canvas);
 
         if (lyrics != null && lyrics.size() > 0) {
+
+            //平移
+            //这一句所花的时间 ：休眠时间 = 移动的距离 ： 总距离（行高）
+            //移动的距离 =  (这一句所花的时间 ：休眠时间)* 总距离（行高）
+//                float delta = ((currentPositon-timePoint)/sleepTime )*textHeight;
+            //屏幕的的坐标 = 行高 + 移动的距离
+            LogUtil.e("timePoint = " + timePoint);
+            float plush = 0;
+            if (sleepTime == 0) {
+                plush = 0;
+            }else{
+                plush = textHeight + ((currentPosition - timePoint) / sleepTime) * textHeight;
+            }
+            canvas.translate(0, -plush);
+
+
             // 绘制歌词中间位置，蓝色画笔
             String currentText = lyrics.get(index).getContent();
             canvas.drawText(currentText, width / 2, hight / 2, bluePaint);
@@ -169,7 +187,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
                 int tempIndex = i - 1;
                 if (lyrics.get(tempIndex).getTimePoint() <= currentPosition) {
                     index = tempIndex;
-                    timepoint = lyrics.get(index).getTimePoint();
+                    timePoint = lyrics.get(index).getTimePoint();
                     sleepTime = lyrics.get(index).getSleepTime();
                 }
 
