@@ -28,6 +28,7 @@ import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.activity.AudioPlayerActivity;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.CacheUtils;
+import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 /**
  * Created by ldgd on 2018/7/10.
@@ -291,12 +292,6 @@ public class MusicPlayerService extends Service {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        notificationManager.cancel(1);
-
-    }
 
     /**
      * 播放音乐
@@ -361,6 +356,14 @@ public class MusicPlayerService extends Service {
     private void stop() {
         mediaPlayer.stop();
     }
+
+    @Override
+    public void onDestroy() {
+        notificationManager.cancel(1);
+        super.onDestroy();
+    }
+
+
 
     /**
      * 得到当前的播放进度
@@ -584,7 +587,6 @@ public class MusicPlayerService extends Service {
      * @return
      */
     private boolean isPlaying() {
-
         return mediaPlayer.isPlaying();
     }
 

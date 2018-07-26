@@ -32,6 +32,7 @@ import example.ldgd.com.mymobileplayer2.IMusicPlayerService;
 import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.service.MusicPlayerService;
+import example.ldgd.com.mymobileplayer2.util.LogUtil;
 import example.ldgd.com.mymobileplayer2.util.LyricUtils;
 import example.ldgd.com.mymobileplayer2.util.Utils;
 import example.ldgd.com.mymobileplayer2.view.ShowLyricView;
@@ -71,6 +72,10 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
      * 自定义歌词类
      */
     private ShowLyricView showlyricview;
+    /**
+     *  服务Intent
+     */
+    private Intent musicPlayerServiceIntent;
 
     private Handler MyHander = new Handler() {
         @Override
@@ -205,10 +210,10 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     }
 
     private void bindService() {
-        Intent intent = new Intent(this, MusicPlayerService.class);
-        intent.setAction("com.ldgd.mobileplayer_OPENAUDIO");
-        bindService(intent, con, Context.BIND_AUTO_CREATE);
-        startService(intent);//不至于实例化多个服务
+         musicPlayerServiceIntent = new Intent(this, MusicPlayerService.class);
+        musicPlayerServiceIntent.setAction("com.ldgd.mobileplayer_OPENAUDIO");
+        bindService(musicPlayerServiceIntent, con, Context.BIND_AUTO_CREATE);
+        startService(musicPlayerServiceIntent);//不至于实例化多个服务
     }
 
     /**
@@ -450,14 +455,24 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(receiver);
 
+        LogUtil.e("plays Activity onDestroy");
+
+        MyHander.removeCallbacksAndMessages(null);
+
+        // 取消广播接收者
+        unregisterReceiver(receiver);
+        // EventBus取消注册
+        EventBus.getDefault().unregister(this);
+
+        // 解绑服务
         if (con != null) {
             unbindService(con);
+            stopService(musicPlayerServiceIntent);
             con = null;  // 让系统更快回收
-
         }
+        super.onDestroy();
+
 
     }
 
@@ -483,4 +498,6 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
         }
     }
+
+
 }
