@@ -14,7 +14,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/now_playing_matrix_01" />
+            android:src="@drawable/now_playing_matrix_01"
+            android:visibility="gone" />
+
+        <example.ldgd.com.mymobileplayer2.view.BaseVisualizerView
+            android:id="@+id/base_visualizer_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"></example.ldgd.com.mymobileplayer2.view.BaseVisualizerView>
 
 
         <TextView

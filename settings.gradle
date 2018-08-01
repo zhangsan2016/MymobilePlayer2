@@ -1,1 +1,1 @@
-include ':app', ':checkvitamio', ':vitamio-sample', ':vitamio'
+include ':app', ':checkvitamio', ':vitamio-sample', ':vitamio', ':Android应用源码音乐实时跳动频谱显示Demo'
