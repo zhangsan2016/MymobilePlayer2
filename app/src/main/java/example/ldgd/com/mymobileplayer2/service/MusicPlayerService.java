@@ -28,7 +28,6 @@ import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.activity.AudioPlayerActivity;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.CacheUtils;
-import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 /**
  * Created by ldgd on 2018/7/10.
@@ -220,6 +219,13 @@ public class MusicPlayerService extends Service {
         public void seeto(int progress) throws RemoteException {
             mediaPlayer.seekTo(progress);
         }
+
+        @Override
+        public int getAudioSessionId() throws RemoteException {
+            return mediaPlayer.getAudioSessionId();
+        }
+
+
     };
 
 

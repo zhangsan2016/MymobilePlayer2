@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -35,6 +36,7 @@ import example.ldgd.com.mymobileplayer2.service.MusicPlayerService;
 import example.ldgd.com.mymobileplayer2.util.LogUtil;
 import example.ldgd.com.mymobileplayer2.util.LyricUtils;
 import example.ldgd.com.mymobileplayer2.util.Utils;
+import example.ldgd.com.mymobileplayer2.view.BaseVisualizerView;
 import example.ldgd.com.mymobileplayer2.view.ShowLyricView;
 
 
@@ -73,9 +75,16 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
      */
     private ShowLyricView showlyricview;
     /**
-     *  服务Intent
+     * 服务Intent
      */
     private Intent musicPlayerServiceIntent;
+
+
+    /*
+      *跳动的音频
+     */
+    private BaseVisualizerView mBaseVisualizerView;
+    private Visualizer mVisualizer;
 
     private Handler MyHander = new Handler() {
         @Override
@@ -210,7 +219,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     }
 
     private void bindService() {
-         musicPlayerServiceIntent = new Intent(this, MusicPlayerService.class);
+        musicPlayerServiceIntent = new Intent(this, MusicPlayerService.class);
         musicPlayerServiceIntent.setAction("com.ldgd.mobileplayer_OPENAUDIO");
         bindService(musicPlayerServiceIntent, con, Context.BIND_AUTO_CREATE);
         startService(musicPlayerServiceIntent);//不至于实例化多个服务
@@ -309,8 +318,31 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         btnLyrc.setOnClickListener(this);
         seekbarVoice.setOnSeekBarChangeListener(new MyOnSeekBarChangeListener());
 
+        // 屏谱
+        mBaseVisualizerView = (BaseVisualizerView) findViewById(R.id.base_visualizer_view);
+
         utils = new Utils();
 
+    }
+
+    /**
+     * 生成一个VisualizerView对象，使音频频谱的波段能够反映到 VisualizerView上
+     */
+    private void setupVisualizerFxAndUi() {
+
+        int audioSessionid = 0;
+        try {
+            audioSessionid = service.getAudioSessionId();
+            System.out.println("audioSessionid==" + audioSessionid);
+            mVisualizer = new Visualizer(audioSessionid);
+            // 参数内必须是2的位数
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+            // 设置允许波形表示，并且捕获它
+            mBaseVisualizerView.setVisualizer(mVisualizer);
+            mVisualizer.setEnabled(true);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -499,5 +531,12 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         }
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 释放音乐屏谱
+        if (mVisualizer != null) {
+            mVisualizer.release();
+        }
+    }
 }

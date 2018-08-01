@@ -19,8 +19,8 @@
 
         <example.ldgd.com.mymobileplayer2.view.BaseVisualizerView
             android:id="@+id/base_visualizer_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"></example.ldgd.com.mymobileplayer2.view.BaseVisualizerView>
 
 
