@@ -120,6 +120,7 @@
     </LinearLayout>
 
     <example.ldgd.com.mymobileplayer2.view.ShowLyricView
+        android:layout_marginTop="18dp"
         android:id="@+id/showlyricview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import java.util.List;
 
 import example.ldgd.com.mymobileplayer2.domain.Lyric;
-import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 /**
  * Created by ldgd on 2018/7/23.
@@ -97,7 +96,7 @@ public class ShowLyricView extends android.support.v7.widget.AppCompatTextView {
             //移动的距离 =  (这一句所花的时间 ：休眠时间)* 总距离（行高）
 //                float delta = ((currentPositon-timePoint)/sleepTime )*textHeight;
             //屏幕的的坐标 = 行高 + 移动的距离
-            LogUtil.e("timePoint = " + timePoint);
+          //  LogUtil.e("timePoint = " + timePoint);
             float plush = 0;
             if (sleepTime == 0) {
                 plush = 0;

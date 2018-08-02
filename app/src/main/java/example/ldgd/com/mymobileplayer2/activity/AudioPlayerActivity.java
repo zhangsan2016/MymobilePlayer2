@@ -95,7 +95,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                 case SHOW_LYRIC:  // 显示歌词
 
                     try {
-
+                         LogUtil.e("SHOW_LYRIC SHOW_LYRIC");
                         // 得到当前进度
                         int progress = service.getCurrentPosition();
                         // 把进度传递到showLyricView控件，计算歌词显示位置
@@ -111,6 +111,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                     break;
                 case PROGRESS:  // 跟新播放界面
 
+                    LogUtil.e("PROGRESS PROGRESS");
                     try {
                         // 设置当前进度
                         int progress = service.getCurrentPosition();
@@ -144,7 +145,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         // 初始化view
         initView();
         // 初始化广播
-        initReceiver();
+      //  initReceiver();
         // 获取数据
         getData();
         // 设置动画
@@ -170,12 +171,15 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 0)
     public void onMessageEvent(MediaItem mediaItem) {
 
+        LogUtil.e("onMessageEvent 执行");
         // 显示当前播放信息
         showViewData();
         //发消息开始歌词同步
         showLyric();
         // 检测播放状态
         checkPlayMode();
+        // 显示音乐屏谱
+        setupVisualizerFxAndUi();
 
     }
 
@@ -234,18 +238,28 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     }
 
     private ServiceConnection con = new ServiceConnection() {
+        /**
+         * 当连接成功的时候回调这个方法
+         * @param iBinder
+         */
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+
+            LogUtil.e("onServiceConnected 执行 service != null = " + (service != null));
 
             //服务的代理类，通过它可以调用服务的方法
             service = IMusicPlayerService.Stub.asInterface(iBinder);
 
-            if (!notification) {
+            if (!notification) {  // 从列表
                 if (service != null) {
                     try {
+                        LogUtil.e("onServiceConnected zhixing");
                         service.openAudio(position);
                         // 检查当前播放模式
                         checkPlayMode();
+                        // 刷新界面
+                        showViewData();
+
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -253,8 +267,13 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
             }
         }
 
+        /**
+         * 当断开连接的时候回调这个方法
+         */
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+
+            LogUtil.e("onServiceDisconnected 断开连接");
 
             try {
                 if (service != null) {
@@ -461,7 +480,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            //  showViewData();
+            //    showViewData();
         }
     }
 
@@ -493,14 +512,16 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         MyHander.removeCallbacksAndMessages(null);
 
         // 取消广播接收者
-        unregisterReceiver(receiver);
+    /*    if (receiver != null) {
+            unregisterReceiver(receiver);
+        }*/
         // EventBus取消注册
         EventBus.getDefault().unregister(this);
 
         // 解绑服务
         if (con != null) {
             unbindService(con);
-            stopService(musicPlayerServiceIntent);
+            //  stopService(musicPlayerServiceIntent);
             con = null;  // 让系统更快回收
         }
         super.onDestroy();
@@ -534,6 +555,8 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     @Override
     protected void onPause() {
         super.onPause();
+        // 清除当前mHandler消息队列
+        MyHander.removeCallbacksAndMessages(null);
         // 释放音乐屏谱
         if (mVisualizer != null) {
             mVisualizer.release();

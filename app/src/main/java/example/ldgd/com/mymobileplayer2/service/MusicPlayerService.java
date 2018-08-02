@@ -28,6 +28,7 @@ import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.activity.AudioPlayerActivity;
 import example.ldgd.com.mymobileplayer2.domain.MediaItem;
 import example.ldgd.com.mymobileplayer2.util.CacheUtils;
+import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 /**
  * Created by ldgd on 2018/7/10.
@@ -365,10 +366,18 @@ public class MusicPlayerService extends Service {
 
     @Override
     public void onDestroy() {
+        LogUtil.e("service onDestroy 被执行");
         notificationManager.cancel(1);
+        // 释放音乐播放器
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+         /*   mediaPlayer.reset();
+            mediaPlayer.release();*/
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
         super.onDestroy();
     }
-
 
 
     /**
@@ -569,10 +578,10 @@ public class MusicPlayerService extends Service {
         // 存储播放模式到sharedPreferences
         CacheUtils.putPlaymode(this, "playmode", playerMode);
 
-        if( this.playerMode==MusicPlayerService.REPEAT_SINGLE){
+        if (this.playerMode == MusicPlayerService.REPEAT_SINGLE) {
             //单曲循环播放-不会触发播放完成的回调
             mediaPlayer.setLooping(true);
-        }else{
+        } else {
             //不循环播放
             mediaPlayer.setLooping(false);
         }
