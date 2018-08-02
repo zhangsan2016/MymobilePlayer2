@@ -80,8 +80,8 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     private Intent musicPlayerServiceIntent;
 
 
-    /*
-      *跳动的音频
+    /**
+     *跳动的音频
      */
     private BaseVisualizerView mBaseVisualizerView;
     private Visualizer mVisualizer;
@@ -95,7 +95,6 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                 case SHOW_LYRIC:  // 显示歌词
 
                     try {
-                         LogUtil.e("SHOW_LYRIC SHOW_LYRIC");
                         // 得到当前进度
                         int progress = service.getCurrentPosition();
                         // 把进度传递到showLyricView控件，计算歌词显示位置
@@ -111,7 +110,6 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                     break;
                 case PROGRESS:  // 跟新播放界面
 
-                    LogUtil.e("PROGRESS PROGRESS");
                     try {
                         // 设置当前进度
                         int progress = service.getCurrentPosition();
@@ -145,7 +143,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         // 初始化view
         initView();
         // 初始化广播
-      //  initReceiver();
+        //  initReceiver();
         // 获取数据
         getData();
         // 设置动画
@@ -245,25 +243,26 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 
-            LogUtil.e("onServiceConnected 执行 service != null = " + (service != null));
-
             //服务的代理类，通过它可以调用服务的方法
             service = IMusicPlayerService.Stub.asInterface(iBinder);
 
-            if (!notification) {  // 从列表
+            try {
                 if (service != null) {
-                    try {
-                        LogUtil.e("onServiceConnected zhixing");
+                    if (!notification) {  // 从列表
+                        // 播放音乐
                         service.openAudio(position);
+
+                    } else {  // 从状态栏
                         // 检查当前播放模式
                         checkPlayMode();
                         // 刷新界面
                         showViewData();
-
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
+                        //发消息开始歌词同步
+                        showLyric();
                     }
                 }
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
 
