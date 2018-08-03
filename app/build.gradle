@@ -33,6 +33,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.ldgd
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "armeabi"
+            // // 指定要ndk需要兼容的架构(这样其他依赖包里除了mips,x86,armeabi,arm-v8之类的so会被过滤掉)
+        }
     }
     buildTypes {
         release {
@@ -57,19 +61,15 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':vitamio')
     compile 'org.xutils:xutils:3.5.0'
-
     /* glide 图片框架*/
     compile 'com.github.bumptech.glide:glide:3.7.0'
-//    compile 'com.github.bumptech.glide:glide:4.7.1'
-//    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
-
+    //    compile 'com.github.bumptech.glide:glide:4.7.1'
+    //    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     /* picasso 图片框架*/
-  //  compile 'com.squareup.picasso:picasso:2.71828'
+    //  compile 'com.squareup.picasso:picasso:2.71828'
     compile 'com.squareup.picasso:picasso:2.5.2'
-
     /*EventBus 框架 EventBus是Android和Java的发布/订阅事件总线。*/
     compile 'org.greenrobot:eventbus:3.1.1'
-
-
-
+    compile files('libs/Sunflower.jar')
+    compile files('libs/Msc.jar')
 }

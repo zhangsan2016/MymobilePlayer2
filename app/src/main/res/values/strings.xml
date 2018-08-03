@@ -11,4 +11,13 @@
     <string name="xlistview_footer_hint_normal">查看更多</string>
     <string name="xlistview_footer_hint_ready">松开载入更多</string>
 
+    <!-- 请替换成在语音云官网申请的appid -->
+    <string name="app_id">5b5844b4</string>
+    <string name="pref_key_translate">translate</string>
+    <!-- 听写 -->
+    <string name="text_begin">请开始说话…</string>
+    <string name="pref_key_iat_show">iat_show</string>
+    <string name="text_show_iat_result">听写结果显示</string>
+    <string name="text_show_contacts">上传联系人/词表显示</string>
+
 </resources>

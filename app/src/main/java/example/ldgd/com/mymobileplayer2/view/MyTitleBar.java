@@ -1,6 +1,7 @@
 package example.ldgd.com.mymobileplayer2.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import example.ldgd.com.mymobileplayer2.R;
+import example.ldgd.com.mymobileplayer2.activity.SearchActivity;
 
 /**
  * Created by ldgd on 2018/4/16.
@@ -57,13 +59,14 @@ public class MyTitleBar extends LinearLayout implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_search:  // 搜索
-                Log.e("xx" ,"搜索");
+                Intent intent = new Intent(context, SearchActivity.class);
+                context.startActivity(intent);
                 break;
             case R.id.rl_game:    // 游戏
-                Log.e("xx","游戏");
+                Log.e("xx", "游戏");
                 break;
             case R.id.iv_record:  // 记录
-                Log.e("xx","记录");
+                Log.e("xx", "记录");
                 break;
         }
 
