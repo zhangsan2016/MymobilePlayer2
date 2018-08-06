@@ -66,7 +66,7 @@ public class SearchActivity extends Activity {
 
 
         // 获取权限
-        requestPermissions();
+     //   requestPermissions();
 
         initView();
 

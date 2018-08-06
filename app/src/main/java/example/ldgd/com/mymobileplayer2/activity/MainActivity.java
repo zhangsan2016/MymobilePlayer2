@@ -30,6 +30,7 @@ import example.ldgd.com.mymobileplayer2.pager.AudioPager;
 import example.ldgd.com.mymobileplayer2.pager.NetAudioPager;
 import example.ldgd.com.mymobileplayer2.pager.NetVideoPager;
 import example.ldgd.com.mymobileplayer2.pager.VideoPager;
+import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 import static example.ldgd.com.mymobileplayer2.R.id.rg_bottom_tag;
 
@@ -91,11 +92,11 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-
+        // 获取权限
+        //  requestPermissions();
         // 当前界面获取读取权限
         isGrantExternalRW(MainActivity.this);
-        // 获取权限
-        requestPermissions();
+
     }
 
     /**
@@ -108,7 +109,7 @@ public class MainActivity extends FragmentActivity {
         // 开启事务
         FragmentTransaction ft = fm.beginTransaction();
         // 替换
-        ft.replace(R.id.fl_main_content,new ReplaceFragment());
+        ft.replace(R.id.fl_main_content, new ReplaceFragment());
         // 提交事务
         ft.commit();
     }
@@ -130,7 +131,7 @@ public class MainActivity extends FragmentActivity {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
             BasePager basePager = getBasePager();
-            if (basePager != null ) {
+            if (basePager != null) {
                 //各个页面的视图
                 return basePager.rootView;
             }
@@ -164,39 +165,39 @@ public class MainActivity extends FragmentActivity {
     }
 
     /**
-     * 解决安卓6.0以上版本不能读取外部存储权限的问题
+     * 解决安卓6.0 以上版本不能读取外部存储权限的问题
      *
      * @param activity
      * @return
      */
-    public  boolean isGrantExternalRW(Activity activity) {
+    public boolean isGrantExternalRW(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             activity.requestPermissions(new String[]{
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, 1);
-
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_SETTINGS,
+                    Manifest.permission.RECORD_AUDIO}, 1);
             return false;
         }
+
         rgBottomTag.check(R.id.rb_video);
         return true;
     }
-
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
-
+                LogUtil.e("onRequestPermissionsResult grantResults.length = " + grantResults.length);
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     rgBottomTag.check(R.id.rb_video);
 
                 } else {
-                    Toast.makeText(MainActivity.this,"获取权限失败，不能使用当前功能",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "获取权限失败，不能使用当前功能", Toast.LENGTH_SHORT).show();
                     this.finish();
                 }
                 return;
@@ -205,27 +206,27 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-
     /**
      * 是否已经退出
      */
     private boolean isExit = false;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode ==KeyEvent.KEYCODE_BACK){
-            if(position != 0){//不是第一页面
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (position != 0) {//不是第一页面
                 position = 0;
                 rgBottomTag.check(R.id.rb_video);//首页
                 return true;
-            }else  if(!isExit){
+            } else if (!isExit) {
                 isExit = true;
-                Toast.makeText(MainActivity.this,"再按一次退出",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        isExit  = false;
+                        isExit = false;
                     }
-                },2000);
+                }, 2000);
                 return true;
             }
         }
