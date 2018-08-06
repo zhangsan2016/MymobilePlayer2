@@ -251,10 +251,15 @@ public class SearchActivity extends Activity {
 
     private void requestPermissions() {
 
-        if(   ActivityCompat.shouldShowRequestPermissionRationale(this,
+        // 1. shouldShowRequestPermissionRationale 如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true
+        // 2. 在权限请求系统对话框中选择了 Don’t ask again 选项，此方法将返回 false
+        // 3. 如果设备规范禁止应用具有该权限，此方法也会返回 false
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.RECORD_AUDIO)){
             this.requestPermissions(new String[]{
                     Manifest.permission.RECORD_AUDIO}, 1);
+        }else{
+            // 可以弹窗提示用户（必须需要此权限才能使用功能）
         }
 
 
