@@ -3,7 +3,6 @@ package example.ldgd.com.mymobileplayer2.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -32,6 +31,7 @@ import java.util.LinkedHashMap;
 
 import example.ldgd.com.mymobileplayer2.R;
 import example.ldgd.com.mymobileplayer2.util.JsonParser;
+import example.ldgd.com.mymobileplayer2.util.LogUtil;
 
 
 /**
@@ -65,9 +65,6 @@ public class SearchActivity extends Activity {
         setContentView(R.layout.activity_search);
 
 
-        // 获取权限
-     //   requestPermissions();
-
         initView();
 
         // 初始化识别无UI识别对象
@@ -80,6 +77,9 @@ public class SearchActivity extends Activity {
 
 
         setListener();
+
+        // 获取权限
+        requestPermissions();
 
 
     }
@@ -156,30 +156,6 @@ public class SearchActivity extends Activity {
         }
         mResultText.setText(resultBuffer.toString());
         mResultText.setSelection(mResultText.length());
-    }
-
-    private void requestPermissions() {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                int permission = ActivityCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                if (permission != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]
-                            {Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE,
-                                    Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE,
-                                    Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS}, 0x0010);
-                }
-
-                if (permission != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.ACCESS_FINE_LOCATION}, 0x0010);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -270,6 +246,34 @@ public class SearchActivity extends Activity {
         // 注：AUDIO_FORMAT参数语记需要更新版本才能生效
         mIat.setParameter(SpeechConstant.AUDIO_FORMAT, "wav");
         mIat.setParameter(SpeechConstant.ASR_AUDIO_PATH, Environment.getExternalStorageDirectory() + "/msc/iat.wav");
+    }
+
+
+    private void requestPermissions() {
+
+        if(   ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.RECORD_AUDIO)){
+            this.requestPermissions(new String[]{
+                    Manifest.permission.RECORD_AUDIO}, 1);
+        }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                LogUtil.e("onRequestPermissionsResult grantResults.length = " + grantResults.length);
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    Toast.makeText(SearchActivity.this, "没有录音权限，录音功能不可使用！", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+        }
     }
 
     @Override
