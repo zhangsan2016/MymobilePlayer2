@@ -72,4 +72,13 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.1.1'
     compile files('libs/Sunflower.jar')
     compile files('libs/Msc.jar')
+    /* json工具*/
+    compile 'com.google.code.gson:gson:2.8.5'
+    /*gif动画播放器*/
+    compile 'com.felipecsl:gifimageview:2.2.0'
+    /* 节操播放器 */
+    //  compile 'fm.jiecao:jiecaovideoplayer:4.6.3'
+    /*    compile 'fm.jiecao:jiecaovideoplayer:5.5.4'
+           compile 'cn.jzvd:jiaozivideoplayer:6.2.12'*/
+    compile project(':jcvideoplayer-lib')
 }

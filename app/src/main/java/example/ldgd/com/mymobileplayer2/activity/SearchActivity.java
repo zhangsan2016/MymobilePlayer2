@@ -261,8 +261,6 @@ public class SearchActivity extends Activity {
         }else{
             // 可以弹窗提示用户（必须需要此权限才能使用功能）
         }
-
-
     }
 
     @Override
